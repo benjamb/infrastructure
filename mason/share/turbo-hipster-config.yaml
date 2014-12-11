@@ -1,0 +1,47 @@
+zuul_server:
+  gerrit_site: "http://{{ GERRIT_HOSTNAME }}:{{ GERRIT_HTTP_PORT }}"
+  git_origin: "git://{{ GERRIT_HOSTNAME }}:{{ GERRIT_GIT_PORT }}"
+  gearman_host: "{{ GEARMAN_HOST }}"
+  gearman_port: "{{ GEARMAN_PORT }}"
+
+debug_log: /var/log/turbo-hipster/debug.log
+jobs_working_dir: /var/lib/turbo-hipster/jobs
+git_working_dir: /var/lib/turbo-hipster/git
+pip_download_cache: /var/cache/pip
+
+plugins:
+  - name: build
+    function: build:build
+    import-path: mason.tests.build
+    location: /usr/share/system-tests/
+    config:
+      trove-host: "{{ TROVE_HOST }}"
+      artifact-cache-server: "{{ ARTIFACT_CACHE_SERVER }}"
+      controllers: [ "{{ MASON_DISTBUILD_CONTROLLERS }}" ]
+      cluster-morphology: "{{ MASON_CLUSTER_MORPHOLOGY }}"
+  - name: build-test
+    function: build:build_test
+    import-path: mason.tests.build_test
+    location: /usr/share/system-tests/
+    config:
+      trove-host: "{{ TROVE_HOST }}"
+      cluster-morphology: "{{ MASON_CLUSTER_MORPHOLOGY }}"
+      test-infrastructure-type: "{{ MASON_TEST_INFRASTRUCTURE_TYPE }}"
+      deployment-host: [ "{{ MASON_TEST_HOSTS }}" ]
+      trove-id: "{{ TROVE_ID }}"
+      openstack-network-id: "{{ OPENSTACK_NETWORK_ID }}"
+  - name: artifact-upload
+    function: build:artifact_upload
+    import-path: mason.tests.artifact_upload
+    location: /usr/share/system-tests/
+    config:
+      artifact-cache-server: "{{ ARTIFACT_CACHE_SERVER }}"
+      cluster-morphology: "{{ MASON_CLUSTER_MORPHOLOGY }}"
+      architecture: "{{ MASON_ARCHITECTURE }}"
+      upstream-trove: "{{ MASON_UPSTREAM_TROVE }}"
+      upload-release-artifacts: False
+
+publish_logs:
+  type: local
+  path: /var/log/
+  prepend_url: http://localhost/logs
