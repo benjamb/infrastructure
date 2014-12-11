@@ -1,0 +1,127 @@
+help: |
+    This is a "morph deploy" configuration extension to fully configure
+    a Mason instance at deployment time. It uses the following variables
+    from the environment:
+    
+      * TROVE_ID
+      * TROVE_HOST
+      * ARTIFACT_CACHE_SERVER
+    
+      * GERRIT_USER
+      * GERRIT_HOSTNAME
+      * GERRIT_HTTP_PORT
+      * GERRIT_GIT_PORT
+      * GERRIT_SSH_KEY
+      * GERRIT_SSH_KEY_PATH
+    
+      * GEARMAN_HOST
+      * GEARMAN_PORT
+      * START_GEARMAN
+    
+      * MASON_CLUSTER_MORPHOLOGY
+      * MASON_ARCHITECTURE
+      * MASON_TEST_HOSTS
+      * MASON_DISTBUILD_CONTROLLERS
+      * MASON_TEST_INFRASTRUCTURE_TYPE
+      * MASON_UPSTREAM_TROVE
+    
+      * MASON_OPENSTACK_NETWORK_ID
+      * MASON_OPENSTACK_USER
+      * MASON_OPENSTACK_PASSWORD
+      * MASON_OPENSTACK_TENANT_ID
+      * MASON_OPENSTACK_TENANT_NAME
+      * MASON_OPENSTACK_AUTH_URL
+
+    The variables are described in more detail below.
+
+    A Mason deployment needs to know the following things:
+
+      * The ID and public name of the upstream Trove it should
+        use with morph.
+      * The hostname of the Gerrit instance to be monitored.
+      * A username to use on the Gerrit instance to be monitored,
+        and an ssh key with which to authenticate.
+
+    These, amongst some other configuration for Mason, are provided
+    by the variables described in this help.
+
+      * TROVE_ID: the same as for distbuild, this is the short ID of
+        your upstream Trove.
+      * TROVE_HOST: the same as for distbuild, this is the FQDN or
+        IP address of your upstream Trove.
+      * ARTIFACT_CACHE_SERVER: this is the FQDN or IP address of the
+        artifact cache you wish to use - normally the same as
+        TROVE_HOST.
+
+      * GERRIT_USER: the username of the Gerrit account Zuul should
+        use to look for and report on changes.
+      * GERRIT_HOSTNAME: the FQDN or IP address of the Gerrit instance
+        to be used.
+      * GERRIT_HTTP_PORT: the port used to access the HTTP frontend of
+        Gerrit - normally 8080.
+      * GERRIT_GIT_PORT: the port used to access Gerrit's git interface
+        (and via SSH) - normally 29418.
+      * GERRIT_SSH_KEY: the location of the SSH key to be added to the
+        system for use when accessing Gerrit. If this is not the same
+        WORKER_SSH_KEY then GERRIT_SSH_KEY_PATH should *not* be
+        "/root/.ssh/id_rsa"
+      * GERRIT_SSH_KEY_PATH: the location to put the SSH key for Gerrit
+        in the system. Normally, "/root/.ssh/id_rsa" is sufficient,
+        unless WORKER_SSH_KEY and GERRIT_SSH_KEY are not the same.
+
+      * GEARMAN_HOST: the FQDN or IP address of the Gearman server. If
+        START_GEARMAN is yes, then this should be 127.0.0.1
+      * GEARMAN_PORT: the port used for accessing the Gearman server.
+        This is normally 4730.
+      * START_GEARMAN: yes or no. If yes, then a Gearman server is run
+        on the Mason instance by Zuul.
+
+      * MASON_ARCHITECTURE: this is currently used to determine which
+        artifacts need to be uploaded. Artifacts from systems in
+        MASON_CLUSTER_MORPHOLOGY with arch: MASON_ARCHITECTURE are
+        uploaded.
+      * MASON_CLUSTER_MORPHOLOGY: this is the cluster morphology which
+        contains the systems to be tested.
+      * MASON_DISTBUILD_CONTROLLERS: this is a comma separated list of
+        pairs of the form "architecture:ip" which defines the distbuild
+        networks available for Mason. It is not used by the tests at
+        the moment however.
+      * MASON_TEST_HOSTS: this is a comma separated list of pairs of the
+        form "architecture:user@url" which defines the places to deploy
+        test systems to. If MASON_TEST_INFRASTRUCTURE_TYPE is "openstack"
+        then use your OpenStack auth URL.
+      * MASON_TEST_INFRASTRUCTURE_TYPE: this can be 'kvm' or 'openstack',
+        depending on if you are deploying your test instances to a kvm
+        host or an OpenStack cloud.
+      * MASON_UPSTREAM_TROVE: this is the Trove to which artifacts are
+        uploaded on success by Mason.
+
+    The following are only required if MASON_TEST_INFRASTRUCTURE_TYPE is
+    openstack:
+
+      * MASON_OPENSTACK_AUTH_URL: the auth url of the OpenStack instance
+        test systems are deployed to.
+      * MASON_OPENSTACK_NETWORK_ID: the network ID that test systems will
+        be connected to.
+      * MASON_OPENSTACK_USER: the username used by Mason to deploy test
+        systems with Glance.
+      * MASON_OPENSTACK_TENANT: the tenancy to deploy test systems in.
+      * MASON_OPENSTACK_PASSWORD: the password of the Mason user on
+        OpenStack. Note that this will be stored in plaintext on the
+        Mason instance. Perhaps pass this via the command line?
+
+    It is possible to deploy a generic Mason which you can then boot
+    and give configuration to at a later date:
+
+      MASON_GENERIC: yes
+
+    To configure a generic Mason, add a YAML file containing all the
+    required variables in the form at /etc/mason/mason.conf:
+
+      VARIABLE: value
+      VARIABLE: value
+      ...       ...
+
+    However, you will still need to provide ARTIFACT_CACHE_SERVER,
+    TROVE_ID and TROVE_HOST as they are also used by distbuild.configure.
+

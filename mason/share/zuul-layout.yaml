@@ -1,0 +1,22 @@
+pipelines:
+  - name: check
+    manager: IndependentPipelineManager
+    trigger:
+      gerrit:
+        - event: patchset-created
+    success:
+      gerrit:
+        verified: 1
+    failure:
+      gerrit:
+        verified: -1
+
+jobs:
+  - name: ^.*-merge$
+    failure-message: Unable to merge change, please rebase and try again.
+
+projects:
+  - name: baserock/baserock/definitions
+    check:
+      - build:
+        - build_test

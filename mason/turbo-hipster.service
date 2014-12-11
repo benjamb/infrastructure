@@ -1,0 +1,10 @@
+[Unit]
+Description=turbo-hipster: Test runner for Zuul
+After=zuul-server.service
+
+[Service]
+User=root
+ExecStart=/bin/sh -c ". /etc/os.conf && /usr/bin/turbo-hipster -c /etc/turbo-hipster-config.yaml"
+
+[Install]
+WantedBy=multi-user.target
