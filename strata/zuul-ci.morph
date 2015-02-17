@@ -1,0 +1,137 @@
+name: zuul-ci
+kind: stratum
+description: |
+  This stratum contains Zuul, turbo-hipster, and their dependencies.
+
+  Zuul is a project gating system which orchestrates testing of patches and
+  handling merging when certain conditions are met (one of which could be
+  the tests Zuul organises pass). See http://ci.openstack.org/zuul/ for
+  full documentation of Zuul.
+
+  turbo-hipster is a Zuul worker which handles the running of tests.
+  turbo-hipster tells a Zuul instance what tests it can run when it starts,
+  and then Zuul will request it runs a test on a given patch depending on
+  Zuul's configuration. See http://turbo-hipster.readthedocs.org/ for full
+  documentation of turbo-hipster.
+build-depends:
+- morph: strata/python-paramiko.morph
+- morph: strata/morph-utils.morph
+- morph: strata/openstack-clients.morph
+chunks:
+- name: paste
+  repo: upstream:python-packages/paste
+  ref: 4c177fce89fee925f0f4fbfde00ce2e1252562c0
+  unpetrify-ref: master
+  build-depends: []
+- name: webob
+  repo: upstream:python-packages/webob
+  ref: 48f3cf1f3d9d194d3c6dc2afb1c890cf7cf5f075
+  unpetrify-ref: 1.2.3
+  build-depends: []
+- name: smmap
+  repo: upstream:python-packages/smmap
+  ref: eb40b44ce4a6e646aabf7b7091d876738336c42f
+  unpetrify-ref: master
+  build-depends: []
+- name: gitdb
+  repo: upstream:python-packages/gitdb
+  ref: ab4520683ab325046f2a9fe6ebf127dbbab60dfe
+  unpetrify-ref: master
+  build-depends:
+  - smmap
+- name: gitpython
+  repo: upstream:python-packages/gitpython
+  ref: 87756520b17aa0cb79a881d9aba7b4c73bddbcae
+  unpetrify-ref: baserock/zuul-ci
+  build-depends:
+  - gitdb
+- name: lockfile
+  repo: upstream:python-packages/lockfile
+  ref: 777758cdf4520271370b3338b86b5c66f9b104f0
+  unpetrify-ref: master
+  build-depends: []
+- name: ordereddict
+  repo: upstream:python-packages/ordereddict-tarball
+  ref: 332cd0213829089dd827a32e7c5e64c41ce79cbc
+  unpetrify-ref: master
+  build-depends: []
+- name: python-daemon
+  repo: upstream:python-packages/python-daemon
+  ref: afcc4ea312255a2545f9c67d7c34ffefb00c80c0
+  unpetrify-ref: master
+  build-depends: []
+- name: extras
+  repo: upstream:python-packages/python-test-extras
+  ref: cdeb596f01241e9c779332e86f6edcd0c2e8e9f0
+  unpetrify-ref: master
+  build-depends: []
+- name: mock
+  repo: upstream:python-packages/mock
+  ref: 35b35f7ad239005a950f870af57b44dbdc99d66b
+  unpetrify-ref: master
+  build-depends: []
+- name: nose
+  repo: upstream:python-packages/nose
+  ref: 908b2cda43eff9ab7a5045b6f6dfe3a718fb9afd
+  unpetrify-ref: release_1.2.1
+  build-depends: []
+- name: flake8
+  repo: upstream:python-packages/flake8
+  ref: 32a273fbdb64500cb8d7f0bcae7059078524f86d
+  unpetrify-ref: 1.7.0
+  build-depends: []
+- name: pystatsd
+  repo: upstream:python-packages/pystatsd
+  ref: 97cc0e10b0f86a23096c1197aeef74e3be5da75c
+  unpetrify-ref: v2.1.2
+  build-depends:
+  - mock
+  - nose
+  - flake8
+- name: voluptuous
+  repo: upstream:python-packages/voluptuous
+  ref: edcdd9a696eb16a565842aeefc3072a713755d84
+  unpetrify-ref: 0.8.6
+  build-depends: []
+- name: gear
+  repo: upstream:python-packages/gear
+  ref: 7bad8c1b9275bfacc47e7d5b8ba5abb6204a0c21
+  unpetrify-ref: master
+  build-depends: []
+- name: apscheduler
+  repo: upstream:python-packages/apscheduler
+  ref: 398ec4dee4b6be200cfbc0acedd9d9db454fefed
+  unpetrify-ref: v2.1.2
+  build-depends: []
+- name: python-magic
+  repo: upstream:python-packages/python-magic
+  ref: 3664686df1e8e202bc449083d68ff0035ece63ea
+  unpetrify-ref: master
+  build-depends: []
+- name: zuul
+  repo: upstream:openstack/zuul
+  ref: 1f4f8e136ec33b8babf58c0f43a83860fa329e52
+  unpetrify-ref: master
+  build-depends:
+  - paste
+  - webob
+  - gitpython
+  - lockfile
+  - ordereddict
+  - python-daemon
+  - extras
+  - pystatsd
+  - voluptuous
+  - gear
+  - apscheduler
+- name: turbo-hipster
+  repo: upstream:openstack/turbo-hipster
+  ref: 479a1010f3066dd15e8e23d7deedebad7db69100
+  unpetrify-ref: baserock/allow-external-plugins
+  build-depends:
+  - python-magic
+  - lockfile
+  - gear
+  - python-daemon
+  - extras
+  - gitpython
