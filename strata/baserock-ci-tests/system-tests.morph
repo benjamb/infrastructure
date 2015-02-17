@@ -1,0 +1,5 @@
+name: system-tests
+kind: chunk
+install-commands:
+- mkdir -p "$DESTDIR$PREFIX"/share/system-tests
+- cp -a mason "$DESTDIR$PREFIX"/share/system-tests/mason
