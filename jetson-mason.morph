@@ -1,0 +1,20 @@
+name: jetson-mason
+kind: cluster
+description: |
+  A Mason system on NVIDIA Jetson.
+systems:
+- morph: systems/build-system-armv7lhf-jetson.morph
+  deploy:
+    jetson-mason:
+      type: ssh-rsync
+      location: root@localhost
+      ROOT_DEVICE: "/dev/mmcblk0p1"
+      DTB_PATH: "boot/tegra124-jetson-tk1.dtb"
+      BOOTLOADER_CONFIG_FORMAT: "extlinux"
+      BOOTLOADER_INSTALL: "none"
+      KERNEL_ARGS: cma=256M console=tty0 console=ttyS0,115200n8 no_console_suspend=1 nouveau.pstate=1
+
+      DISTBUILD_GENERIC: true
+      INSTALL_FILES: distbuild/manifest
+      MASON_GENERIC: true
+      HOSTNAME: sam-jetson-mason
