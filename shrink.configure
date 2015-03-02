@@ -2,7 +2,7 @@
 
 # If you're not deploying on ARM, you need to have a cross 'strip' available...
 # you can use the armv7lhf-cross-toolchain stratum.
-STRIP=arm-none-eabi-strip
+STRIP=strip
 
 root=$1
 
