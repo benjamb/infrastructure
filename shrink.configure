@@ -1,0 +1,26 @@
+# Shrink images a bit.
+
+# If you're not deploying on ARM, you need to have a cross 'strip' available...
+# you can use the armv7lhf-cross-toolchain stratum.
+STRIP=arm-none-eabi-strip
+
+root=$1
+
+gcc_libexec=$1/usr/libexec/gcc/armv7-unknown-linux-gnueabihf/4.9.2/
+# Just delete Fortan
+rm $gcc_libexec/f951
+
+$STRIP $gcc_libexec/cc1
+$STRIP $gcc_libexec/cc1plus
+$STRIP $gcc_libexec/collect2
+$STRIP $gcc_libexec/lto1
+$STRIP $gcc_libexec/plugins/gengtype
+
+$STRIP $1/usr/libexec/git-core
+$STRIP $1/bin/*
+$STRIP $1/usr/bin/*
+$STRIP $1/lib/*.so
+$STRIP $1/usr/lib/*.so
+
+rm -R $1/usr/share/doc
+rm -R $1/usr/share/man

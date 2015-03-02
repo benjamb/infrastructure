@@ -38,3 +38,4 @@ configuration-extensions:
 - fstab
 - mason
 - cloud-init
+- shrink
