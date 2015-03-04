@@ -46,6 +46,6 @@ chunks:
   - python-json-pointer
 - name: python-prettytable
   repo: upstream:python-prettytable
-  ref: 7a48f1e84049577370cf28632a75d2fd01e4142d
-  unpetrify-ref: master
+  ref: bea6a50e4da00074b35b57232771cea58b89b3e0
+  unpetrify-ref: 0.7.2-RELEASE
   build-depends: []
