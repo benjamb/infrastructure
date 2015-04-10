@@ -202,13 +202,12 @@ because Storyboard only supports MariaDB.
 
 To deploy this system to production:
 
-    packer build -only=production database/packer_template.json
     nova boot database-mariadb \
         --key-name=$keyname \
         --flavor dc1.1x1 \
-        --image 'database-mariadb' \
-        --nic='net-id=d079fa3e-2558-4bcb-ad5a-279040c202b5,v4-fixed-ip=192.168.222.30' \
-        --security-groups default,database-mariadb
+        --image=$fedora_image_id \
+        --nic="net-id=$network_id,v4-fixed-ip=192.168.222.30" \
+        --security-groups default,database-mysql \
         --user-data ./baserock-ops-team.cloud-config
     nova volume-create \
         --display-name database-volume \
@@ -217,6 +216,7 @@ To deploy this system to production:
         100
     nova volume-attach database-mariadb <volume ID> /dev/vdb
 
+    ansible-playbook -i hosts database/image-config.yml
     ansible-playbook -i hosts database/instance-config.yml
 
 To add the required users and databases, run the following playbook. This can
