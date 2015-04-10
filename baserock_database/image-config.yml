@@ -1,10 +1,10 @@
 # System configuration for Baserock database server.
 #
-# Packer runs this playbook inside the system at 'build' time, using the
-# command `sudo ansible-playbook`.
+# This Ansible playbook expects to be run on a Fedora 21 Cloud image.
 ---
-- hosts: localhost
+- hosts: database-mariadb
   gather_facts: False
+  sudo: True
   tasks:
   - name: enable persistant journal
     shell: mkdir /var/log/journal
@@ -20,3 +20,12 @@
         - mariadb
         - mariadb-server
         - MySQL-python
+
+  - name: install libselinux-python, so Ansible can control selinux
+    yum: name=libselinux-python state=latest
+
+  - name: disable SELinux on subsequent boots
+    selinux: state=disabled
+
+  - name: disable SELinux on current boot
+    command: setenforce 0

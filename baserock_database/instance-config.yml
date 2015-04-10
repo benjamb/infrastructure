@@ -21,5 +21,3 @@
     - name: ensure mysql user owns /var/lib/mysql
       file: path=/var/lib/mysql owner=mysql group=mysql mode=600 state=directory
 
-    - name: restart the MariaDB service
-      service: name=mariadb enabled=true state=restarted
