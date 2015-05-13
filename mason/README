@@ -1,0 +1,120 @@
+Mason with Zuul/Gearman/turbo-hipster
+=====================================
+
+Configuration
+-------------
+
+Some of the configuration is done by Ansible. This is documented in
+clusters/mason-system-x86_64-openstack-deploy.morph. The config files
+which are dealt with in this way are mason/share/zuul.conf and
+mason/share/turbo-hipster-config.yaml. You will probably want to
+edit the default configuration in mason/share/zuul-layout.yaml.
+
+### mason/share/zuul-layout.yaml
+
+Full documentation of the configuration of Zuul can be found [here][0].
+
+The projects section in this file contains a list of projects and the
+tests to run on them. The "name" field should be the name of the
+project on Gerrit. You then define the jobs to be run for each pipeline
+on that project. In the example,
+
+projects:
+  - name: baserock/baserock/definitions
+    check:
+      - build:
+        - build_test
+
+there exists some pipeline named check. The above sets up Zuul to run
+the job "build" when the check pipeline gets a change. If the build job
+is successful, then Zuul will run the build_test job. On completion,
+Zuul will report in the way defined in the pipeline.
+
+Not all tests have dependencies. The following is also valid:
+
+projects:
+  - name: baserock/baserock/definitions
+    check:
+      - build
+      - some-other-test
+
+[0]: http://ci.openstack.org/zuul/zuul.html#layout-yaml
+
+Debugging
+---------
+
+Once you've deployed a Mason and got it configured correctly, you may
+want or need to look at its logs or restart it. If you change its config,
+you'll need to do:
+
+    systemctl restart zuul-server
+    systemctl restart zuul-merger
+
+And if you change /etc/turbo-hipster-config.yaml you will also need
+to do:
+
+    systemctl restart turbo-hipster
+
+The logs created by the current plugins are in /var/www/logs/. These
+will be useful if a change causes a build to fail and you need to see why.
+They are also accessible by going to "http://<mason-ip>/logs/" in a web
+browser.
+
+Zuul saves its logs in /var/log/zuul/debug.log and /var/log/zuul/zuul.log.
+The most useful of these for discovering why something has gone wrong is
+debug.log.
+
+Turbo-hipster saves its logs in /var/log/turbo-hipster/debug.log. Its quite
+messy but can be useful for determining what part of a plugin went wrong.
+
+The plugins are in "/usr/share/system-tests/mason/tests/". If you change
+them, you will need to run
+
+    systemctl restart turbo-hipster
+
+in order for turbo-hipster to use the right plugin code.
+
+Issues
+------
+
+### "--verified" is not a valid option
+
+This suggests that either your Gerrit instance has not been configured
+to have a "Verified" label, or your Mason user on Gerrit cannot change
+the value of said label.
+
+### project "foo/bar" is not found
+
+This means that a Gerrit event has occurred on a project not listed in
+the projects section of /etc/zuul-layout.yaml. If that event was a
+change you wanted testing, you'll need to amend /etc/zuul-layout.yaml.
+
+### failing to deploy test systems
+
+Check your OpenStack credentials. Look in /var/log/morph.log to see
+where the deployment (if any) failed. If none, check your config. Does
+the test plugin in /etc/turbo-hipster-config.yaml have "deployment-hosts"
+set correctly (["architecture:user@url"], for OpenStack x86_64 this could
+be "x86_64:user@openstack.example.com:5000/v2.0/" - the username is not
+used for OpenStack)? Is the deployment host reachable from your machine?
+The turbo-hipster logs may be useful for finding the exact error with
+the deployment.
+
+Useful commands
+---------------
+
+Run these on the machine running Zuul.
+
+Show the running jobs:
+
+    zuul -c /etc/zuul.conf show running-jobs
+
+Force Zuul to reassess a change:
+
+    zuul -c /etc/zuul.conf enqueue --trigger gerrit --pipeline check --project baserock/baserock/definitions --change 71,1
+
+where 71 is the change number.
+
+Full docs of the Zuul client are [here][1].
+
+[1]: http://ci.openstack.org/zuul/client.html

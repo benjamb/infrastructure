@@ -1,0 +1,55 @@
+name: mason-system-x86_64-openstack-deploy
+kind: cluster
+description: |
+  An example cluster morphology demonstrating how to deploy a Mason
+  instance into an OpenStack Cloud.
+
+  Mason consists of a distbuild system and Zuul/turbo-hipster to run
+  tests. In the future, we should make it possible to deploy a Mason
+  instance which uses an existing distbuild network for builds,
+  rather than setting up its own.
+
+systems:
+- morph: systems/mason-system-x86_64-generic.morph
+  deploy-defaults:
+    # The following are all needed for extensions other than mason.configure
+    ARTIFACT_CACHE_SERVER: cache.baserock.org
+    CONTROLLERHOST: mason-system-x86-64
+    DISTBUILD_CONTROLLER: true
+    DISTBUILD_WORKER: true
+    RAM_SIZE: 8G
+    DISK_SIZE: 4G
+    VCPUS: 2
+    TROVE_HOST: git.baserock.org
+    TROVE_ID: baserock
+    WORKERS: mason-system-x86-64
+    WORKER_SSH_KEY: ssh-keys/worker.key
+    HOSTNAME: mason-system-x86-64
+    CLOUD_INIT: yes
+    KERNEL_ARGS: console=ttyS0 console=tty0
+    INSTALL_FILES: distbuild/manifest
+    # It could be worthwhile setting these in your environment instead of here
+    OPENSTACK_AUTH_URL: auth-url
+    OPENSTACK_IMAGENAME: mason-system-x86_64
+    OPENSTACK_NETWORK_ID: network-id
+    OPENSTACK_USER: openstack-username
+    OPENSTACK_TENANT: openstack-tenant
+  deploy:
+      mason:
+          type: openstack
+          location: auth-url
+          MASON_OPENSTACK_AUTH_URL: auth-url
+          MASON_OPENSTACK_NETWORK_ID: network-id
+          MASON_OPENSTACK_USER: mason
+          MASON_OPENSTACK_TENANT: mason-tenant
+          GERRIT_USER: mason
+          GERRIT_HOSTNAME: gerrit.example.com
+          GERRIT_SSH_KEY: ssh-keys/worker.key
+          GERRIT_SSH_KEY_PATH: /root/.ssh/id_rsa
+          GEARMAN_HOST: 127.0.0.1
+          MASON_CLUSTER_MORPHOLOGY: clusters/ci.morph
+          MASON_ARCHITECTURE: x86_64
+          MASON_TEST_HOSTS: "x86_64:user@auth-url"
+          MASON_DISTBUILD_CONTROLLERS: "x86_64:not-yet-used"
+          MASON_TEST_INFRASTRUCTURE_TYPE: openstack
+          MASON_UPSTREAM_TROVE: some-writeable-artifact-cache

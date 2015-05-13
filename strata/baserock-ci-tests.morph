@@ -1,0 +1,14 @@
+name: baserock-ci-tests
+kind: stratum
+description: |
+  This stratum contains chunks which provide tests to be run by the
+  Baserock CI Pipeline (Mason).
+build-depends:
+- morph: strata/morph-utils.morph
+chunks:
+- name: system-tests
+  morph: strata/baserock-ci-tests/system-tests.morph
+  repo: baserock:baserock/system-tests
+  ref: 7fb68b7f377583dac40634338870583baaa2fe65
+  unpetrify-ref: baserock/mason-v2
+  build-depends: []

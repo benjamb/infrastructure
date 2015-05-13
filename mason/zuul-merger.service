@@ -1,0 +1,10 @@
+[Unit]
+Description=Zuul Merger: Handles automated merging of changes
+After=zuul-server.service
+
+[Service]
+User=root
+ExecStart=/usr/bin/zuul-merger -d -c /etc/zuul.conf
+
+[Install]
+WantedBy=multi-user.target

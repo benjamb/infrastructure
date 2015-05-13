@@ -1,0 +1,24 @@
+name: python-paramiko
+kind: stratum
+description: A stratum with Paramiko and its dependencies.
+build-depends:
+- morph: strata/core.morph
+chunks:
+- name: ecdsa
+  repo: upstream:python-packages/ecdsa
+  ref: 36e9cfa80fcf8b53119adc787e54a5892ec1eb2c
+  unpetrify-ref: python-ecdsa-0.11
+  build-depends: []
+- name: pycrypto
+  morph: strata/python-paramiko/pycrypto.morph
+  repo: upstream:python-packages/pycrypto
+  ref: 7fd528d03b5eae58eef6fd219af5d9ac9c83fa50
+  unpetrify-ref: v2.6.1
+  build-depends: []
+- name: paramiko
+  repo: upstream:paramiko
+  ref: 951faed80b017e553a27c4cb98f210df44341f8f
+  unpetrify-ref: baserock/morph
+  build-depends:
+  - ecdsa
+  - pycrypto
