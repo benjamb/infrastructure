@@ -5,4 +5,4 @@
 
 
 install:
-	(cd .. && ./mason.configure /)
+	(cd .. && sh ./mason.configure /)
