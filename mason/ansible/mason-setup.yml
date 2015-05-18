@@ -13,29 +13,42 @@
   - fail: msg='ARTIFACT_CACHE_SERVER is mandatory'
     when: ARTIFACT_CACHE_SERVER is not defined
 
+  # Gerrit settings.
+  #
+  # These are mandatory, Zuul currently cannot be used without Gerrit.
+
   - fail: msg='GERRIT_USER is mandatory'
     when: GERRIT_USER is not defined
 
   - fail: msg='GERRIT_HOSTNAME is mandatory'
     when: GERRIT_HOSTNAME is not defined
 
-  - fail: msg='GERRIT_HTTP_PORT is mandatory'
+  - set_fact: GERRIT_HTTP_PORT=80
     when: GERRIT_HTTP_PORT is not defined
 
-  - fail: msg='GERRIT_GIT_PORT is mandatory'
+  - set_fact: GERRIT_GIT_PORT=29418
     when: GERRIT_GIT_PORT is not defined
 
   - fail: msg='GERRIT_SSH_KEY_PATH is mandatory'
     when: GERRIT_SSH_KEY_PATH is not defined
 
-  - fail: msg='GEARMAN_HOST is mandatory'
+  # Gearman settings: overriding these is possible in case the user wants to
+  # integrate this Mason with an external Gearman server, but I'm not sure why
+  # you'd want to do that right now.
+
+  - set_fact: GEARMAN_HOST=localhost
     when: GEARMAN_HOST is not defined
 
-  - fail: msg='GEARMAN_PORT is mandatory'
+  - set_fact: GEARMAN_PORT=4730
     when: GEARMAN_PORT is not defined
 
-  - fail: msg='START_GEARMAN is mandatory'
+  - set_fact: START_GEARMAN=yes
     when: START_GEARMAN is not defined
+
+  # Mason-specific settings
+  #
+  # These describe which Baserock systems to build and test, how to test them,
+  # and what to do with the resulting artifacts.
 
   - fail: msg='MASON_CLUSTER_MORPHOLOGY is mandatory'
     when: MASON_CLUSTER_MORPHOLOGY is not defined
@@ -43,17 +56,14 @@
   - fail: msg='MASON_ARCHITECTURE is mandatory'
     when: MASON_ARCHITECTURE is not defined
 
-  - fail: msg='MASON_TEST_HOSTS is mandatory'
-    when: MASON_TEST_HOSTS is not defined
-
   - fail: msg='MASON_DISTBUILD_CONTROLLERS is mandatory'
     when: MASON_DISTBUILD_CONTROLLERS is not defined
 
-  - fail: msg='MASON_TEST_INFRASTRUCTURE_TYPE is mandatory'
+  - set_fact: MASON_TEST_INFRASTRUCTURE_TYPE=none
     when: MASON_TEST_INFRASTRUCTURE_TYPE is not defined
 
-  - fail: msg='MASON_UPSTREAM_TROVE is mandatory'
-    when: MASON_UPSTREAM_TROVE is not defined
+  - fail: msg='MASON_TEST_HOSTS is mandatory when MASON_TEST_INFRASTRUCTURE_TYPE is not "none"'
+    when: MASON_TEST_INFRASTRUCTURE_TYPE != "none" and MASON_TEST_HOSTS is not defined
 
   - fail: msg='OPENSTACK_NETWORK_ID is mandatory when MASON_TEST_INFRASTRUCTURE_TYPE=openstack'
     when: MASON_TEST_INFRASTRUCTURE_TYPE == "openstack" and OPENSTACK_NETWORK_ID is not defined
@@ -69,6 +79,9 @@
 
   - fail: msg='OS_AUTH_URL is mandatory when MASON_TEST_INFRASTRUCTURE_TYPE=openstack'
     when: MASON_TEST_INFRASTRUCTURE_TYPE == "openstack" and OS_AUTH_URL is not defined
+
+  # MASON_UPSTREAM_TROVE can also be set. If defined, built artifacts will be
+  # uploaded to that Trove.
 
   - name: Create required configuration files
     template: src=/usr/share/mason-setup/{{ item }} dest=/etc/{{ item }}

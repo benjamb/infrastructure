@@ -30,6 +30,8 @@ plugins:
       deployment-host: [ "{{ MASON_TEST_HOSTS }}" ]
       trove-id: "{{ TROVE_ID }}"
       openstack-network-id: "{{ OPENSTACK_NETWORK_ID }}"
+
+{%if MASON_UPSTREAM_TROVE is defined %}
   - name: artifact-upload
     function: build:artifact_upload
     import-path: mason.tests.artifact_upload
@@ -40,6 +42,7 @@ plugins:
       architecture: "{{ MASON_ARCHITECTURE }}"
       upstream-trove: "{{ MASON_UPSTREAM_TROVE }}"
       upload-release-artifacts: False
+{% endif %}
 
 publish_logs:
   type: local
