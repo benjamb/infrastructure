@@ -83,6 +83,13 @@
   # MASON_UPSTREAM_TROVE can also be set. If defined, built artifacts will be
   # uploaded to that Trove.
 
+  # Internal-only variable, used as a way of ensuring the OpenStack
+  # configuration is loaded when the 'turbo-hipster' job executor is started.
+
+  - set_fact: TURBO_HIPSTER_COMMAND='/usr/bin/turbo-hipster -c /etc/turbo-hipster-config.yaml'
+  - set_fact: TURBO_HIPSTER_COMMAND='/bin/sh -c ". /etc/os.conf && {{TURBO_HIPSTER_COMMAND}"
+    when: MASON_TEST_INFRASTRUCTURE_TYPE == "openstack"
+
   - name: Create required configuration files
     template: src=/usr/share/mason-setup/{{ item }} dest=/etc/{{ item }}
     with_items:
