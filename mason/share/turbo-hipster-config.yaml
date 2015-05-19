@@ -19,6 +19,8 @@ plugins:
       artifact-cache-server: "{{ ARTIFACT_CACHE_SERVER }}"
       controllers: [ "{{ MASON_DISTBUILD_CONTROLLERS }}" ]
       cluster-morphology: "{{ MASON_CLUSTER_MORPHOLOGY }}"
+
+{% if MASON_TEST_INFRASTRUCTURE_TYPE != "none" %}
   - name: build-test
     function: build:build_test
     import-path: mason.tests.build_test
@@ -30,6 +32,7 @@ plugins:
       deployment-host: [ "{{ MASON_TEST_HOSTS }}" ]
       trove-id: "{{ TROVE_ID }}"
       openstack-network-id: "{{ OPENSTACK_NETWORK_ID }}"
+{% endif %}
 
 {%if MASON_UPSTREAM_TROVE is defined %}
   - name: artifact-upload
