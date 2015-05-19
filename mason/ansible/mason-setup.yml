@@ -86,11 +86,11 @@
   - name: Create required configuration files
     template: src=/usr/share/mason-setup/{{ item }} dest=/etc/{{ item }}
     with_items:
-    - zuul.conf
+    - zuul/zuul.conf
     - turbo-hipster-config.yaml
     - lighttpd.conf
     - zuul-layout.yaml
-    - zuul-logging.conf
+    - zuul/zuul-logging.conf
 
   - name: Create the OpenStack credentials file
     template: src=/usr/share/mason-setup/{{ item }} dest=/etc/{{ item }}
