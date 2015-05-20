@@ -14,8 +14,6 @@ strata:
   morph: strata/bsp-x86_64-generic.morph
 - name: tools
   morph: strata/tools.morph
-- name: morph-utils
-  morph: strata/morph-utils.morph
 - name: openstack-clients
   morph: strata/openstack-clients.morph
 - name: openstack-common
@@ -26,26 +24,37 @@ strata:
   morph: strata/pcre-utils.morph
 - name: lighttpd-server
   morph: strata/lighttpd-server.morph
-- name: webtools
-  morph: strata/webtools.morph
-- name: ruby
-  morph: strata/ruby.morph
-- name: nodejs
-  morph: strata/nodejs.morph
+- name: python-core
+  morph: strata/python-core.morph
+- name: python-common
+  morph: strata/python-common.morph
 - name: python-tools
   morph: strata/python-tools.morph
-- name: python-paramiko
-  morph: strata/python-paramiko.morph
+- name: python-cliapp
+  morph: strata/python-cliapp.morph
+- name: python-wsgi
+  morph: strata/python-wsgi.morph
+- name: morph-utils
+  morph: strata/morph-utils.morph
 - name: ansible
   morph: strata/ansible.morph
 - name: zuul-ci
   morph: strata/zuul-ci.morph
 - name: baserock-ci-tests
   morph: strata/baserock-ci-tests.morph
-- name: python-core
-  morph: strata/python-core.morph
-- name: python-common
-  morph: strata/python-common.morph
+
+# TODO: We probably don't need devtools in production Mason systems
+- name: devtools
+  morph: strata/devtools.morph
+
+# TODO: Figure out why these are here. Maybe for graphite?
+- name: webtools
+  morph: strata/webtools.morph
+- name: ruby
+  morph: strata/ruby.morph
+- name: nodejs
+  morph: strata/nodejs.morph
+
 configuration-extensions:
 - set-hostname
 - add-config-files
