@@ -14,7 +14,7 @@ description: |
   Zuul's configuration. See http://turbo-hipster.readthedocs.org/ for full
   documentation of turbo-hipster.
 build-depends:
-- morph: strata/python-paramiko.morph
+- morph: strata/python-common.morph
 - morph: strata/morph-utils.morph
 - morph: strata/openstack-clients.morph
 chunks:
@@ -110,7 +110,7 @@ chunks:
   build-depends: []
 - name: zuul
   repo: upstream:openstack/zuul
-  ref: 1f4f8e136ec33b8babf58c0f43a83860fa329e52
+  ref: 2f76173c39d18bdeafd6727ecee92478a6ab9dd6
   unpetrify-ref: master
   build-depends:
   - paste
