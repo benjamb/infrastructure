@@ -47,7 +47,7 @@ mkdir -p "$ROOT"/var/log/zuul
 mkdir -p "$ROOT/usr/share/mason-setup"
 mkdir -p "$ROOT/usr/lib/mason-setup"
 
-cp mason/share/* "$ROOT/usr/share/mason-setup"
+cp -r mason/share/* "$ROOT/usr/share/mason-setup"
 cp -r mason/ansible "$ROOT/usr/lib/mason-setup/"
 
 ln -s ../mason-setup.service "$ROOT"/etc/systemd/system/multi-user.target.wants/mason-setup.service

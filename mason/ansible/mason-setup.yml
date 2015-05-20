@@ -70,14 +70,21 @@
   - fail: msg='OS_AUTH_URL is mandatory when MASON_TEST_INFRASTRUCTURE_TYPE=openstack'
     when: MASON_TEST_INFRASTRUCTURE_TYPE == "openstack" and OS_AUTH_URL is not defined
 
-  - name: Create required configuration files
-    template: src=/usr/share/mason-setup/{{ item }} dest=/etc/{{ item }}
+  - name: Create Zuul configuration directory
+    file: path=/etc/zuul state=directory
+
+  - name: Create Zuul configuration files
+    template: src=/usr/share/mason-setup/zuul/{{ item }} dest=/etc/zuul/{{ item }}
     with_items:
     - zuul.conf
-    - turbo-hipster-config.yaml
+    - layout.yaml
+    - logging.conf
+
+  - name: Create other required configuration files
+    template: src=/usr/share/mason-setup/{{ item }} dest=/etc/{{ item }}
+    with_items:
     - lighttpd.conf
-    - zuul-layout.yaml
-    - zuul-logging.conf
+    - turbo-hipster-config.yaml
 
   - name: Create the OpenStack credentials file
     template: src=/usr/share/mason-setup/{{ item }} dest=/etc/{{ item }}

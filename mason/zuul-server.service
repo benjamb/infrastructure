@@ -4,7 +4,7 @@ After=mason-setup.service
 
 [Service]
 User=root
-ExecStart=/usr/bin/zuul-server -d -c /etc/zuul.conf -l /etc/zuul-layout.yaml
+ExecStart=/usr/bin/zuul-server -d
 
 [Install]
 WantedBy=multi-user.target

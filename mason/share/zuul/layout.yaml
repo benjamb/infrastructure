@@ -1,5 +1,5 @@
 pipelines:
-  - name: check
+  - name: check-change
     manager: IndependentPipelineManager
     trigger:
       gerrit:
@@ -10,6 +10,12 @@ pipelines:
     failure:
       gerrit:
         verified: -1
+  - name: post-commit
+    manager: IndependentPipelineManager
+    trigger:
+      gerrit:
+        - event: ref-updated
+          ref: ^(!?refs/).*$
 
 jobs:
   - name: ^.*-merge$
@@ -17,6 +23,9 @@ jobs:
 
 projects:
   - name: baserock/baserock/definitions
-    check:
+    check-change:
+      - build:
+        - build_test
+    post-commit:
       - build:
         - build_test

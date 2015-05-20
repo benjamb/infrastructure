@@ -4,7 +4,7 @@ After=zuul-server.service
 
 [Service]
 User=root
-ExecStart=/usr/bin/zuul-merger -d -c /etc/zuul.conf
+ExecStart=/usr/bin/zuul-merger -d
 
 [Install]
 WantedBy=multi-user.target
