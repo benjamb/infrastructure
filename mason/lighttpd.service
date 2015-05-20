@@ -1,0 +1,10 @@
+[Unit]
+Description=HTTP server for Mason
+After=network.target
+
+[Service]
+User=root
+ExecStart=/usr/sbin/lighttpd -D -f /etc/lighttpd.conf
+
+[Install]
+WantedBy=multi-user.target

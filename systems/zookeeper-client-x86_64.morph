@@ -17,9 +17,12 @@ strata:
   morph: strata/zookeeper.morph
 - name: zookeeper-client
   morph: strata/zookeeper-client.morph
+- name: test-tools
+  morph: strata/test-tools.morph
 configuration-extensions:
 - set-hostname
 - add-config-files
 - simple-network
 - nfsboot
 - install-files
+- install-essential-files
