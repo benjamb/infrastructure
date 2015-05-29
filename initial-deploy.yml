@@ -1,0 +1,29 @@
+# An Ansible script to deploy all the Baserock infrastructure from
+# scratch / from a backup.
+#
+# No, really ...
+#
+# This requires the unreleased Ansible 2.0.0, because it needs os_server,
+# os_volume and os_volume_attach modules.
+
+---
+
+- hosts: localhost
+  vars_files:
+    - config/codethink-nebula-samthursfield.yml
+  tasks:
+    - name: database
+      nova_compute:
+        name: database-mariadb
+        state: present
+        auth_url: {{ env.OS_AUTH_URL }}
+        flavor_ram: 1G
+        image_name: {{ FEDORA_IMAGE_NAME }}
+        key_name: {{ env.OS_KEY_NAME }}
+        login_password: {{ env.OS_PASSWORD }}
+        login_tenant_name: {{ env.OS_TENANT_NAME }}
+        login_username: {{ env.OS_USERNAME }}
+        nics: {{ NETWORK_ID }}
+        security_groups: default, database-mysql
+        user_data: ./baserock-ops-team.cloud-config
+        wait: yes
