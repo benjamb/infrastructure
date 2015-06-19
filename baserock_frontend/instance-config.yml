@@ -7,12 +7,12 @@
   gather_facts: false
   sudo: yes
   tasks:
-  - name: ensure system up to date
-    yum: name=* state=latest
-
   # To create the .pem file, simply concatenate
   # certs/baserock.org-ssl-certificate-temporary-dsilverstone.full.cert with
   # the private key for that certificate (which is not committed to Git, of
   # course).
   - name: install SSL certificate
-    copy: src=../private/baserock.org-ssl-certificate-temporary-dsilverstone.pem owner=haproxy mode=400
+    copy: src=../private/baserock.org-ssl-certificate-temporary-dsilverstone.pem dest=/etc/pki/tls/private/baserock.pem owner=haproxy mode=400
+
+  - name: HAProxy configuration
+    copy: src=haproxy.cfg dest=/etc/haproxy/haproxy.cfg

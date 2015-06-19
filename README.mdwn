@@ -171,29 +171,37 @@ simply pointing each subdomain to a different instance using separate public
 IPs. It also provides a starting point for future load-balancing and failover
 configuration.
 
-If you want to add a new service to the Baserock Project infrastructure via
-the frontend, alter the haproxy.cfg file in the frontend/ directory. Our
-OpenStack instance doesn't provide any kind of internal DNS service, so you
-must put the fixed IP of each instance.
-
 To deploy this system:
 
-    packer build -only=production frontend/packer_template.json
+    nova boot frontend-haproxy \
+        --key-name=$keyname \
+        --flavor=dc1.1x1.1 \
+        --image=$fedora_image_id \
+        --nic="net-id=$network_id" \
+        --security-groups default,gerrit,web-server \
+        --user-data ./baserock-ops-team.cloud-config
+    ansible-playbook -i hosts baserock_frontend/image-config.yml
+    ansible-playbook -i hosts baserock_frontend/instance-config.yml
 
-    ansible-playbook -i hosts frontend/instance-config.yml
+    ansible -i hosts -m service -a 'name=haproxy enabled=true state=started' \
+        --sudo frontend-haproxy
+
+The baserock_frontend system is stateless.
 
 Full HAProxy 1.5 documentation: <https://cbonte.github.io/haproxy-dconv/configuration-1.5.html>.
 
-When setting up a new instance with the frontend already deployed, do the
-following:
+If you want to add a new service to the Baserock Project infrastructure via
+the frontend, do the following:
 
-- request a subdomain that points at 85.199.252.162
-- log in to the frontend-haproxy machine
-- edit /etc/haproxy/haproxy.conf, and make the same changes to the copy in this
-  repo.
-- run: `sudo haproxy -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid -sf
-  $(cat /var/run/haproxy.pid)` to reload the configuration without interrupting
-  the service (this confuses systemd, but I'm not sure how to avoid that)
+- request a subdomain that points at 185.43.218.170 (frontend)
+- alter the haproxy.cfg file in the baserock_frontend/ directory in this repo
+  as necessary to proxy requests to the real instance
+- run the baserock_frontend/instance-config.yml playbook
+- run `ansible -i hosts -m service -a 'name=haproxy enabled=true
+  state=restarted' --sudo frontend-haproxy`
+
+OpenStack doesn't provide any kind of internal DNS service, so you must put the
+fixed IP of each instance.
 
 ### Database
 
