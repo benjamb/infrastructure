@@ -22,6 +22,10 @@
   description: Baserock Import Tool
   use-storyboard: true
 
+- project: baserock/lorry
+  description: Lorry mirroring tool
+  use-storyboard: true
+
 - project: baserock/morph
   description: Morph build tool
   use-storyboard: true
