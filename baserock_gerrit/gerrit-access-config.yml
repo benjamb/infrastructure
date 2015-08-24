@@ -144,18 +144,16 @@
           - "{{ reviewers_group }}"
           - "{{ testers_group }}"
 
-# it'd be nice if this module existed... but it doesn't right now. You'll have
-# to commit the files manually.
-#
-#    - name: push access configuration for all repos
-#      git_commit_in_branch:
-#        repo: ssh://{{ env.GERRIT_ADMIN_USERNAME }}@{{ env.GERRIT_URL}}:29418/All-Projects
-#        ref: refs/meta/config
-#        source: All-Projects
-#        committer_name: Baserock Gerrit configuration scripts
-#        committer_email: admin@baserock.org
-#        commit_message: >
-#            Update global configuration.
-#
-#            This commit was made by an Ansible playbook living in
-#            git://git.baserock.org/baserock/baserock/infrastructure.
+    - name: push access configuration for all repos
+      git_commit_and_push:
+        repo: "{{ ansible_env.GERRIT_ADMIN_REPO }}"
+        ref: refs/meta/config
+        files:
+          - ./All-Projects/groups
+          - ./All-Projects/project.config
+        strip_path_components: 1
+        commit_message: |
+            Update global project access control rules.
+
+            This commit was made by an Ansible playbook living in
+            git://git.baserock.org/baserock/baserock/infrastructure.

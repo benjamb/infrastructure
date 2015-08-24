@@ -372,25 +372,15 @@ couple of non-standard packages.
 
     git clone git://git.baserock.org/delta/python-packages/pygerrit.git
     git clone git://github.com/ssssam/ansible-gerrit
+    cd ansible-gerrit && make; cd -
 
     export GERRIT_URL=gerrit web URL
     export GERRIT_ADMIN_USERNAME=your username
     export GERRIT_ADMIN_PASSWORD=your generated HTTP password
+    export GERRIT_ADMIN_REPO=ssh://you@gerrit:29418/All-Projects.git
 
     ANSIBLE_LIBRARY=./ansible-gerrit PYTHONPATH=./pygerrit \
-    ansible-playbook a2378_gerrit/gerrit-access-config.yml
-
-As well as creating all the groups and initial users in the new Gerrit
-instance, Ansible should update the file baserock_gerrit/All-Projects/groups,
-which will be needed in the next step.
-
-    git clone ssh://$GERRIT_ADMIN_USERNAME@gerrit.baserock.org:29418/All-Projects.git /tmp/All-Projects
-    cp -a baserock_gerrit/All-Projects/*  /tmp/All-Projects
-    cd /tmp/All-Projects
-    git checkout -b config
-    git commit -a -m "Set up initial access controls."
-    git push origin config:refs/meta/config
-    cd -
+    ansible-playbook baserock_gerrit/gerrit-access-config.yml
 
 [gerrit set-members]: https://gerrit-documentation.storage.googleapis.com/Documentation/2.9.4/cmd-set-members.html
 
@@ -402,6 +392,9 @@ Run:
 
 Now clone the Gerrit's lorry-controller configuration repository, commit the
 configuration file to it, and push.
+
+    # FIXME: we could use the git_commit_and_push Ansible module for this now,
+    # instead of doing it manually.
 
     git clone ssh://$GERRIT_ADMIN_USERNAME@gerrit.baserock.org:29418/local-config/lorries.git /tmp/lorries
     cp baserock_gerrit/lorry-controller.conf /tmp/lorries
