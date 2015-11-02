@@ -12,7 +12,7 @@ systems:
 - morph: systems/gerrit-system-x86_64.morph
   deploy:
     gerrit.baserock.org:
-      type: openstack
+      type: extensions/openstack
       location: https://compute.datacentred.io:5000/v2.0
 
         # You can use this method to deploy upgrades over SSH, after the
