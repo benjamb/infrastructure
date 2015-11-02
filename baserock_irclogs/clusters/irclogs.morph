@@ -8,6 +8,6 @@ systems:
       location: http://compute.datacentred.io:5000/v2.0/
       DISK_SIZE: 4G
       HOSTNAME: irclogs
-      CLOUD_INIT: yes
+      CLOUD_INIT: true
       KERNEL_ARGS: console=ttyS0 console=tty0
       OPENSTACK_IMAGENAME: irclogs

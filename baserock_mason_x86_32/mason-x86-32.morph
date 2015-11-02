@@ -8,7 +8,7 @@ systems:
     mason:
       type: openstack
       location: https://compute.datacentred.io:5000/v2.0
-      CLOUD_INIT: yes
+      CLOUD_INIT: true
       DISK_SIZE: 3G
       DISTBUILD_GENERIC: true
       INSTALL_FILES: distbuild/manifest
