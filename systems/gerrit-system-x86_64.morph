@@ -16,6 +16,8 @@ strata:
   morph: strata/build-essential.morph
 - name: core
   morph: strata/core.morph
+- name: glib-common
+  morph: strata/glib-common.morph
 - name: python-core
   morph: strata/python-core.morph
 - name: bsp-x86_64-generic
@@ -59,8 +61,10 @@ strata:
   morph: strata/tools.morph
 
 configuration-extensions:
-- set-hostname
-- add-config-files
-- nfsboot
-- install-files
-- cloud-init
+- extensions/set-hostname
+- extensions/add-config-files
+- extensions/nfsboot
+- extensions/install-files
+- extensions/fstab
+- extensions/cloud-init
+- extensions/install-essential-files
