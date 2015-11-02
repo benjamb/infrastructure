@@ -30,6 +30,8 @@ strata:
   morph: strata/python-wsgi.morph
 - name: libsoup-common
   morph: strata/libsoup-common.morph
+- name: glib-common
+  morph: strata/glib-common.morph
 - name: ostree-core
   morph: strata/ostree-core.morph
 - name: morph-utils
@@ -50,6 +52,8 @@ strata:
   morph: strata/nfs.morph
 - name: python-core
   morph: strata/python-core.morph
+- name: python3-core
+  morph: strata/python3-core.morph
 - name: python-common
   morph: strata/python-common.morph
 - name: chef

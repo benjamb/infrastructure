@@ -9,6 +9,8 @@ strata:
   morph: strata/core.morph
 - name: python-core
   morph: strata/python-core.morph
+- name: python3-core
+  morph: strata/python3-core.morph
 - name: python-pygobject
   morph: strata/python-pygobject.morph
 - name: python-common
@@ -59,6 +61,8 @@ strata:
   morph: strata/ntpd.morph
 - name: libsoup-common
   morph: strata/libsoup-common.morph
+- name: glib-common
+  morph: strata/glib-common.morph
 - name: test-tools
   morph: strata/test-tools.morph
 - name: swift
@@ -80,6 +84,7 @@ configuration-extensions:
 - extensions/openstack-network
 - extensions/openstack-neutron
 - extensions/openstack-ceilometer
+- extensions/openstack-time
 - extensions/fstab
 - extensions/openstack-ironic
 - extensions/install-essential-files

@@ -1,10 +1,10 @@
 name: virtualization
 kind: stratum
 description: |
-    Virtualization for baserock
-    NOTE: this stratum requires kernel support, please see openstack bsp
-    kernel history to check which config are needed for openvswitch, libvirt,
-    or ebtables, for example.
+  Virtualization for baserock
+  NOTE: this stratum requires kernel support, please see openstack bsp
+  kernel history to check which config are needed for openvswitch or libvirt,
+  for example.
 build-depends:
 - morph: strata/libsoup-common.morph
 - morph: strata/python-core.morph
@@ -12,17 +12,14 @@ build-depends:
 - morph: strata/connman-common.morph
 - morph: strata/lvm.morph
 - morph: strata/xorg-util-macros-common.morph
+- morph: strata/networking-utils.morph
+- morph: strata/docutils.morph
 chunks:
 - name: yajl
   morph: strata/virtualization/yajl.morph
   repo: upstream:yajl
   ref: 52fc681857228c65c1cb439782da485554875481
   unpetrify-ref: baserock/morph
-- name: xml-catalog
-  morph: strata/virtualization/xml-catalog.morph
-  repo: baserock:baserock/xml-catalog
-  ref: 1d4a2abc875c4dda1b5eadc0a097a48a8d2ec82b
-  unpetrify-ref: master
 - name: dnsmasq
   morph: strata/virtualization/dnsmasq.morph
   repo: upstream:dnsmasq
@@ -42,11 +39,6 @@ chunks:
   repo: upstream:dmidecode
   ref: 47a0aa5d6696a83922ee70279b7253a4e55947d5
   unpetrify-ref: master
-- name: ebtables
-  morph: strata/virtualization/ebtables.morph
-  repo: upstream:ebtables
-  ref: f4bdc80ae8c1a79b4ab5dcb8431ad85aea618d66
-  unpetrify-ref: master
 - name: libvirt
   morph: strata/virtualization/libvirt.morph
   repo: upstream:libvirt
@@ -56,10 +48,8 @@ chunks:
   - libpciaccess
   - dnsmasq
   - qemu
-  - xml-catalog
   - yajl
   - dmidecode
-  - ebtables
 - name: pycurl
   repo: upstream:pycurl
   ref: 5ca370827d88817eeca3c56cbb37e4ddccc16c6e

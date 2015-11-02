@@ -1,7 +1,6 @@
 name: build-system-armv8l64
 kind: system
-description:
-- |
+description: |
   The system that should be used for building all other Baserock systems
   for little endian 64-bit ARMv8 computers.
 arch: armv8l64
@@ -14,6 +13,8 @@ strata:
   morph: strata/foundation.morph
 - name: python-core
   morph: strata/python-core.morph
+- name: python3-core
+  morph: strata/python3-core.morph
 - name: bsp-armv8l64-generic
   morph: strata/bsp-armv8l64-generic.morph
 - name: tools
@@ -42,6 +43,8 @@ strata:
   morph: strata/devtools.morph
 - name: libsoup-common
   morph: strata/libsoup-common.morph
+- name: glib-common
+  morph: strata/glib-common.morph
 - name: ostree-core
   morph: strata/ostree-core.morph
 configuration-extensions:

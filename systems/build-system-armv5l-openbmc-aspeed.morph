@@ -1,7 +1,6 @@
 name: build-system-armv5l-openbmc-aspeed
 kind: system
-description:
-- |
+description: |
   The system that should be used for building other Baserock systems
   for little endian ARMv5 computers.
 arch: armv5l
@@ -14,6 +13,8 @@ strata:
   morph: strata/foundation.morph
 - name: python-core
   morph: strata/python-core.morph
+- name: python3-core
+  morph: strata/python3-core.morph
 - name: bsp-armv5l-openbmc-aspeed
   morph: strata/bsp-armv5l-openbmc-aspeed.morph
 - name: tools
@@ -30,6 +31,8 @@ strata:
   morph: strata/devtools.morph
 - name: libsoup-common
   morph: strata/libsoup-common.morph
+- name: glib-common
+  morph: strata/glib-common.morph
 - name: ostree-core
   morph: strata/ostree-core.morph
 - name: mtd-utilities

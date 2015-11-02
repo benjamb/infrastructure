@@ -1,6 +1,7 @@
 name: build-system-armv7lhf-highbank
 kind: system
-description: The system that should be used for building all other Baserock systems for ARMv7 little-endian hard-float Calxeda Highbank computers.
+description: The system that should be used for building all other Baserock systems
+  for ARMv7 little-endian hard-float Calxeda Highbank computers.
 arch: armv7lhf
 strata:
 - name: build-essential
@@ -11,6 +12,8 @@ strata:
   morph: strata/foundation.morph
 - name: python-core
   morph: strata/python-core.morph
+- name: python3-core
+  morph: strata/python3-core.morph
 - name: bsp-armv7-highbank
   morph: strata/bsp-armv7-highbank.morph
 - name: tools
@@ -39,6 +42,8 @@ strata:
   morph: strata/devtools.morph
 - name: libsoup-common
   morph: strata/libsoup-common.morph
+- name: glib-common
+  morph: strata/glib-common.morph
 - name: ostree-core
   morph: strata/ostree-core.morph
 - name: unionfs-fuse-group

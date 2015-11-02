@@ -1,7 +1,6 @@
 name: build-system-armv8b64
 kind: system
-description:
-- |
+description: |
   The system that should be used for building all other Baserock systems
   for 64-bit ARMv8 computers running in big-endian mode.
 arch: armv8b64
@@ -16,6 +15,8 @@ strata:
   morph: strata/bsp-armv8b64-generic.morph
 - name: python-core
   morph: strata/python-core.morph
+- name: python3-core
+  morph: strata/python3-core.morph
 - name: tools
   morph: strata/tools.morph
 - name: python-cliapp
@@ -26,6 +27,8 @@ strata:
   morph: strata/python-wsgi.morph
 - name: libsoup-common
   morph: strata/libsoup-common.morph
+- name: glib-common
+  morph: strata/glib-common.morph
 - name: ostree-core
   morph: strata/ostree-core.morph
 - name: morph-utils

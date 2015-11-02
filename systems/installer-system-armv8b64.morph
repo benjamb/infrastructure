@@ -1,6 +1,7 @@
 name: installer-system-armv8b64
 kind: system
-description: The system that should be used as an Installer to install other Baserock systems.
+description: The system that should be used as an Installer to install other Baserock
+  systems.
 arch: armv8b64
 strata:
 - name: build-essential
@@ -9,6 +10,8 @@ strata:
   morph: strata/core.morph
 - name: python-core
   morph: strata/python-core.morph
+- name: python3-core
+  morph: strata/python3-core.morph
 - name: foundation
   morph: strata/foundation.morph
 - name: bsp-armv8b64-generic
@@ -21,6 +24,8 @@ strata:
   morph: strata/python-wsgi.morph
 - name: libsoup-common
   morph: strata/libsoup-common.morph
+- name: glib-common
+  morph: strata/glib-common.morph
 - name: ostree-core
   morph: strata/ostree-core.morph
 - name: morph-utils

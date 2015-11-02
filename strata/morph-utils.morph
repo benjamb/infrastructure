@@ -36,9 +36,21 @@ chunks:
   unpetrify-ref: master
 - name: morph
   repo: baserock:baserock/morph
-  ref: 2579391b05758940652a8ac5207d0137720affd1
+  ref: 60c378c55d5d0ef89184b49ae95e445f8de422e3
   unpetrify-ref: master
   build-depends:
   - cmdtest
   - pyfilesystem
   - pylru
+
+# This chunk isn't required to use Morph, but is required to do automated
+# migrations within the definitions.git repo.
+#
+# Currently we include a forked version that includes some support for
+# preserving blank lines. This is quite useful when operating on .morph files.
+# The patches have been submitted upstream here:
+# https://bitbucket.org/ruamel/yaml/pull-request/3
+- name: ruamel.yaml
+  repo: upstream:python-packages/ruamel.yaml
+  ref: 840b3ccdb306c6aa6d874474e621ae5596595ae4
+  unpetrify-ref: baserock/sam/blank-line-preservation-1
