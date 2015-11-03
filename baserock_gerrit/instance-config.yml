@@ -9,7 +9,7 @@
 - hosts: gerrit
   gather_facts: False
   vars:
-    GERRIT_VERSION: 2.9.4
+    GERRIT_VERSION: 2.11.4
 
     # Download from http://www.oracle.com/technetwork/java/javase/downloads/server-jre8-downloads-2133154.html
     JRE_FILE: server-jre-8u40-linux-x64.tar.gz
