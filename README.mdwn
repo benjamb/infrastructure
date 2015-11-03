@@ -318,7 +318,7 @@ or 'build' system.
         --flavor 'dc1.2x4.40' \
         --image baserock_gerrit \
         --nic "net-id=$network_id,v4-fixed-ip=192.168.222.69" \
-        --security-groups default,gerrit,git-server,web-server
+        --security-groups default,gerrit,git-server,web-server \
         --user-data baserock-ops-team.cloud-config
 
     nova volume-attach gerrit.baserock.org <volume-id> /dev/vdb
