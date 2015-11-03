@@ -22,7 +22,7 @@
 
     run_gerrit: "{{ JRE_DIR }}/bin/java -jar /opt/gerrit/gerrit-{{ GERRIT_VERSION }}.war"
   vars_files:
-    - ../database/baserock_gerrit.database_password.yml
+    - ../baserock_database/baserock_gerrit.database_password.yml
   tasks:
     - name: add gerrit user
       user:
@@ -60,6 +60,8 @@
 
     - name: initialise Gerrit application directory
       command: "{{ run_gerrit }} init -d /srv/gerrit creates=/srv/gerrit/etc/gerrit.config"
+      sudo: yes
+      sudo_user: gerrit
 
     - name: extract and install some plugins for gerrit
       shell: unzip /opt/gerrit/gerrit-{{ GERRIT_VERSION}}.war WEB-INF/plugins/{{ item }}.jar -p > /srv/gerrit/plugins/{{ item }}.jar
@@ -68,6 +70,8 @@
       with_items:
         - replication
         - download-commands
+      sudo: yes
+      sudo_user: gerrit
 
     - name: download extra Java libraries
       get_url:
