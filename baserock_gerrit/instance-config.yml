@@ -73,6 +73,22 @@
       sudo: yes
       sudo_user: gerrit
 
+     # WARNING Non core plugins are not compiled inside gerrit.war file, we need to
+     # download them from somwhere else (https://gerrit-ci.gerritforge.com/ or
+     # http://builds.quelltextlich.at/gerrit/nightly/index.html).
+     #
+     # We install them from there, but some of the plugins don't have an stable branch for
+     # a given gerrit version. Check before runnig this script that this task
+     # is pointing to the right version (API compatible) of the plugin
+    - name: install non-core plugins for gerrit
+      shell: wget https://gerrit-ci.gerritforge.com/job/plugin-{{ item }}-master/lastBuild/artifact/buck-out/gen/plugins/{{ item }}/{{ item }}.jar -O /srv/gerrit/plugins/{{ item }}.jar
+      args:
+        creates: /srv/gerrit/plugins/{{ item }}.jar
+      with_items:
+        - avatars-gravatar
+      sudo: yes
+      sudo_user: gerrit
+
     - name: download extra Java libraries
       get_url:
         url: "{{ item }}"
