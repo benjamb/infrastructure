@@ -73,6 +73,15 @@
       sudo: yes
       sudo_user: gerrit
 
+    - name: install non-core plugins for gerrit
+      shell: wget https://gerrit-ci.gerritforge.com/job/plugin-{{ item }}-master/lastBuild/artifact/buck-out/gen/plugins/{{ item }}/{{ item }}.jar -O /srv/gerrit/plugins/{{ item }}.jar
+      args:
+        creates: /srv/gerrit/plugins/{{ item }}.jar
+      with_items:
+        - avatars-gravatar
+      sudo: yes
+      sudo_user: gerrit
+
     - name: download extra Java libraries
       get_url:
         url: "{{ item }}"
