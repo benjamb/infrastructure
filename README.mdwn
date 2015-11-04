@@ -237,6 +237,15 @@ are done.
     sudo systemctl enable mariadb.service
     sudo systemctl start mariadb.service
 
+NOTE: If you see the following message in the journal:
+
+    The datadir located at /var/lib/mysql needs to be upgraded using 'mysql_upgrade' tool. This can be done using the following steps
+
+This is because the backup you are importing is from an older version of
+MariaDB. To fix this, as the message says, you only need to run:
+
+    sudo -u mysql mysql_upgrade -u root -p
+
 If you are starting from scratch, you need to prepare the system by adding
 the required users and databases. Run the following playbook, which can
 be altered and rerun whenever you need to add more users or databases, or
