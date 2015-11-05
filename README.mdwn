@@ -120,6 +120,16 @@ Instances themselves are not backed up. In the event of a crisis we will
 redeploy them from the infrastructure.git repository. There should be nothing
 valuable stored outside of the data volumes that are backed up.
 
+To prepare the infrastructure to run the backup scripts you will need to run
+the following playbooks:
+
+    ansible-playbook -i hosts baserock_frontend/instance-backup-config.yml
+    ansible-playbook -i hosts baserock_database/instance-backup-config.yml
+    ansible-playbook -i hosts baserock_gerrit/instance-backup-config.yml
+
+NOTE: to run these playbooks you need to have the public ssh key of the backups
+instance in `keys/backup.key.pub`.
+
 
 Deployment with Packer
 ----------------------
