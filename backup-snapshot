@@ -232,7 +232,7 @@ def main():
 
     try:
         with mount(snapshot_path) as mount_path:
-            run_rsync_server(mount_path, sender_flag))
+            run_rsync_server(mount_path, sender_flag)
 
             status("rsync server process exited with success.")
     finally:
