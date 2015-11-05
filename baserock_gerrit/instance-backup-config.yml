@@ -3,7 +3,7 @@
 - hosts: gerrit
   gather_facts: false
   vars:
-    FRONTEND_IP: 192.168.222.21
+    FRONTEND_IP: 192.168.222.116
   tasks:
     - name: backup-snapshot script
       copy: src=../backup-snapshot dest=/usr/bin/backup-snapshot mode=755
