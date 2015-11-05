@@ -355,6 +355,26 @@ For baserock.org Gerrit you will also need to run:
 
     ansible-playbook -i hosts baserock_gerrit/instance-ca-certificate-config.yml
 
+If you are restoring from a backup, rsync the data across from your
+backup server on the instance, then start the gerrit service.
+
+    systemctl stop gerrit.service
+    rm -r /srv/gerrit/*
+
+    rsync --archive --chown gerrit:gerrit --hard-links \
+         --info=progress2 --partial --sparse \
+         root@backupserver:/srv/backup/gerrit/* /srv/gerrit/
+
+    systemctl start gerrit.service
+
+NOTE: If you are restoring a backup from an older version of Gerrit, you
+might need to run some of the following commands to migrate the schemas of the
+database, and also gerrit data (This was needed to move from 2.9.4 to 2.11.4):
+
+    java -jar /opt/gerrit/gerrit-2.11.3.war init -d /srv/gerrit
+    java -jar /opt/gerrit/gerrit-2.11.3.war reindex -d /srv/gerrit
+
+
 #### Access control
 
 Gerrit should now be up and running and accessible through the web interface.
