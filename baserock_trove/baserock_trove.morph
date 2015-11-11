@@ -1,0 +1,25 @@
+name: trove.baserock.org-upgrade
+kind: cluster
+description: |
+  Deployment .morph for baserock.org Trove system.
+
+  Configuration of the system is handled separately, with a series of
+  Ansible playbooks that should be run after an instance of the system
+  is up and running. See the README for instructions.
+
+systems:
+- morph: systems/trove-system-x86_64.morph
+  deploy-defaults:
+  deploy:
+    gbo:
+      type: extensions/openstack
+      location: https://compute.datacentred.io:5000/v2.0
+
+      upgrade-type: extensions/ssh-rsync
+      upgrade-location: root@git.baserock.org
+
+      TROVE_GENERIC: yes
+      OPENSTACK_IMAGENAME: baserock_trove
+      CLOUD_INIT: true
+      DISK_SIZE: 3G
+      KERNEL_ARGS: console=tty0 console=ttyS0
