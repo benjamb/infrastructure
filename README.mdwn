@@ -326,8 +326,8 @@ or 'build' system.
         --volume-type Ceph \
         100
 
-    morph init ws; cd ws; morph checkout baserock:baserock/infrastructure master;
-    cd master/baserock/baserock/infrastructure
+    git clone git://git.baserock.org/baserock/baserock/infrastructure.git
+    cd infrastructure
 
     morph build systems/gerrit-system-x86_64.morph
     morph deploy baserock_gerrit/baserock_gerrit.morph
@@ -514,8 +514,8 @@ available in infrastructure.git too by default.
 
 To build mason-x86-64:
 
-    morph init ws; cd ws; morph checkout baserock:baserock/infrastructure master;
-    cd master/baserock/baserock/infrastructure
+    git clone git://git.baserock.org/baserock/baserock/infrastructure.git
+    cd infrastructure
 
     morph build systems/build-system-x86_64.morph
     morph deploy baserock_mason_x86_64/mason-x86-64.morph
