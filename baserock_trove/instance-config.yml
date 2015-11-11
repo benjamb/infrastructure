@@ -1,0 +1,28 @@
+# Instance configuration for Baserock Trove server.
+#
+# This script expects a volume to be available at /dev/vdb.
+---
+- hosts: git
+  gather_facts: False
+  sudo: yes
+  tasks:
+
+    - name: Create an ext4 filesystem in /dev/vdb
+      filesystem:
+        fstype: ext4
+        dev: /dev/vdb
+        opts: -L home
+
+    - name: mount home volume
+      mount:
+        src: LABEL=home
+        name: /home
+        fstype: ext4
+        state: mounted
+      register: home_mounted
+
+# Ansible doesn't remount /home properly, so reboot system here
+    - name: Reboot server to mount everything properly
+      shell: reboot
+      when: home_mounted|changed
+      ignore_errors: true

@@ -1,0 +1,43 @@
+# Instance configuration for Baserock Trove server.
+#
+# This script expects a volume to be available at /dev/vdb.
+---
+- hosts: git
+  gather_facts: False
+  sudo: yes
+  tasks:
+
+  # To create the .pem file, simply concatenate
+  # certs/baserock.org-ssl-certificate-temporary-dsilverstone.full.cert with
+  # the private key for that certificate (which is not committed to Git, of
+  # course).
+    - name: Install SSL certificate
+      copy:
+        src: ../private/baserock.org-ssl-certificate-temporary-dsilverstone.pem
+        dest: /etc/trove/baserock.pem
+        mode: 400
+
+    - name: Install CA chain certificate
+      copy:
+        src: ../certs/startcom-class2-ca-chain-certificate.cert
+        dest: /etc/trove/startcom-ca.pem
+
+    - name: Install trove.conf configuration file
+      copy:
+        src: trove.conf
+        dest: /etc/trove/trove.conf
+
+    - name: Copy ssh keys
+      copy:
+        src: ../private/{{ item }}
+        dest: /etc/trove/{{ item }}
+      with_items:
+        - admin.key.pub
+        - lorry.key
+        - lorry.key.pub
+        - worker.key.pub
+
+    - name: Restart the trove-setp service to configure the trove
+      service:
+        name: trove-setup
+        state: restarted
