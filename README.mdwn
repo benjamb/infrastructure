@@ -537,3 +537,48 @@ reference system definitions can only use source code hosted on
 git.baserock.org, by making it impossible to fetch code from anywhere else.
 
 [policy]: http://wiki.baserock.org/policies/
+
+### Trove
+
+To deploy to production, run these commands in a Baserock 'devel'
+or 'build' system.
+
+    nova volume-create \
+        --display-name git.baserock.org-home \
+        --display-description '/home partition of git.baserock.org' \
+        --volume-type Ceph \
+        300
+
+    git clone git://git.baserock.org/baserock/baserock/infrastructure.git
+    cd infrastructure
+
+    morph build systems/trove-system-x86_64.morph
+    morph deploy baserock_trove/baserock_trove.morph
+
+    nova boot git.baserock.org \
+        --key-name $keyname \
+        --flavor 'dc1.8x16' \
+        --image baserock_trove \
+        --nic "net-id=$network_id,v4-fixed-ip=192.168.222.58" \
+        --security-groups default,git-server,web-server,shared-artifact-cache \
+        --user-data baserock-ops-team.cloud-config
+
+    nova volume-attach git.baserock.org <volume-id> /dev/vdb
+
+    # Note, if this floating IP is not available, you will have to change
+    # the DNS in the DNS provider.
+    nova add-floating-ip git.baserock.org 185.43.218.183
+
+    ansible-playbook -i hosts baserock_trove/instance-config.yml
+
+    # Before configuring the Trove you will need to create some ssh
+    # keys for it. You can also use existing keys.
+
+    mkdir private
+    ssh-keygen -N '' -f private/lorry.key
+    ssh-keygen -N '' -f private/worker.key
+    ssh-keygen -N '' -f private/admin.key
+
+    # Now you can finish the configuration of the Trove with:
+
+    ansible-playbook -i hosts baserock_trove/configure-trove.yml
