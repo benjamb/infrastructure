@@ -8,3 +8,4 @@ chunks:
   repo: github:sonyxperiadev/pygerrit
   ref: daad8e23d9bbcd8a2bc565497be50a3cc29dae6b
   unpetrify-ref: master
+  build-system: python-distutils
