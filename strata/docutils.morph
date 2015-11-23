@@ -15,6 +15,7 @@ chunks:
   ref: c8f0ce32a8075e9ab21e5cf734fb96195455264d
   unpetrify-ref: docbook-xml-4.5
   build-depends:
+  
   # This is a little awkward, we don't really build-depend on xml-catalog,
   # but if we don't include it as a build dependency
   # then we won't have the existing xml catalog in our staging area
@@ -31,6 +32,7 @@ chunks:
   ref: 802da9dd5d4bc18f46a916eedc0c5c1980a15e59
   unpetrify-ref: docbook-xsl-1.78.1
   build-depends:
+  
   # Same issue as above, except this time we don't want to overwrite
   # the catalog that now contains the XML DTDs.
   - docbook-xml

@@ -64,17 +64,17 @@ chunks:
   repo: upstream:yelp-xsl
   ref: 2dcf168dde754d18152b008473269a803d6e650b
   unpetrify-ref: master
+  build-system: autotools
   build-depends:
   - itstool
-  build-system: autotools
 - name: yelp-tools
   repo: upstream:yelp-tools
   ref: 6df6bf24e385bbc1ac0b800be8a6e878f18a775c
   unpetrify-ref: master
+  build-system: autotools
   build-depends:
   - itstool
   - yelp-xsl
-  build-system: autotools
 - name: iso-codes
   repo: upstream:iso-codes
   ref: 18ac112b4b84c8f03743565fde3512a637820761
@@ -84,11 +84,11 @@ chunks:
   repo: upstream:gnome/gnome-desktop
   ref: 1dbe40fac0e9924552ce2692ec141e86ce3d5633
   unpetrify-ref: master
+  build-system: autotools
   build-depends:
   - gsettings-desktop-schemas
   - iso-codes
   - yelp-tools
-  build-system: autotools
 - name: libnotify
   repo: upstream:gnome/libnotify
   ref: 2f2c5649ef210b1dffeb46cddf062d20e1518ccf
@@ -220,9 +220,9 @@ chunks:
   repo: upstream:gnome/geocode-glib
   ref: a3e183e40053b4bd0fd0b25a070f60597270397a
   unpetrify-ref: master
+  build-system: autotools
   build-depends:
   - json-glib
-  build-system: autotools
 - name: libmbim
   repo: upstream:libmbim
   ref: 6cf74ebfae1dccf807bb34d88f2cd024d4b14da7
@@ -254,9 +254,9 @@ chunks:
   repo: upstream:gnome/libgweather
   ref: 5b8aed611f24d03434eed35e438cea213b894b7c
   unpetrify-ref: master
+  build-system: autotools
   build-depends:
   - geocode-glib
-  build-system: autotools
 - name: gnome-settings-daemon
   morph: strata/gnome/gnome-settings-daemon.morph
   repo: upstream:gnome-settings-daemon
@@ -278,9 +278,9 @@ chunks:
   repo: upstream:zenity
   ref: d7135db2bdfdca812c0165f90e4611af9c7c6a50
   unpetrify-ref: master
+  build-system: autotools
   build-depends:
   - yelp-tools
-  build-system: autotools
 - name: mozjs24
   morph: strata/gnome/mozjs24.morph
   repo: upstream:mozilla/mozjs24
@@ -290,9 +290,9 @@ chunks:
   repo: upstream:gjs
   ref: 5d480f519e2b7e95cf1fad2f9f1a8e798fd5fe49
   unpetrify-ref: master
+  build-system: autotools
   build-depends:
   - mozjs24
-  build-system: autotools
 - name: telepathy-glib
   morph: strata/gnome/telepathy-glib.morph
   repo: upstream:telepathy-glib
@@ -333,9 +333,9 @@ chunks:
   repo: upstream:gnome/gcr
   ref: 289ba4859fd170285f51e6bbfe91f2aac3b9170d
   unpetrify-ref: 3.18.0
+  build-system: autotools
   build-depends:
   - p11-kit
-  build-system: autotools
 - name: libxkbcommon-x11
   repo: upstream:xorg-lib-libxkbcommon
   ref: c43c3c866eb9d52cd8f61e75cbef1c30d07f3a28
@@ -360,9 +360,9 @@ chunks:
   repo: upstream:libxklavier
   ref: 65c132a65e90a42e898f07243ef544109ada53c9
   unpetrify-ref: master
+  build-system: autotools
   build-depends:
   - iso-codes
-  build-system: autotools
 - name: m4-common
   repo: upstream:m4-common
   ref: 4b704704f5e826b73b79ccfddaf215a510c104c4
@@ -372,9 +372,9 @@ chunks:
   repo: upstream:gnome/libgee
   ref: 4301ab58efc217409c588a5527f68990b4e3d220
   unpetrify-ref: master
+  build-system: autotools
   build-depends:
   - m4-common
-  build-system: autotools
 - name: caribou
   morph: strata/gnome/caribou.morph
   repo: upstream:caribou

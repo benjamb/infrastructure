@@ -270,6 +270,9 @@ chunks:
   ref: 50893291621658f355bc5b4d450a8d06a563053d
   unpetrify-ref: v1.2.8
   build-system: autotools
+  artifacts:
+    zlib-libs: build-essential-minimal
+
   build-depends:
   - stage2-binutils
   - stage2-busybox
@@ -281,9 +284,6 @@ chunks:
   - stage2-make
   - stage2-reset-specs
   - glibc
-  artifacts:
-    zlib-libs: build-essential-minimal
-
 - name: binutils
   morph: strata/build-essential/binutils.morph
   repo: upstream:binutils-tarball
