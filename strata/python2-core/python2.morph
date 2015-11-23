@@ -1,0 +1,13 @@
+name: python2
+kind: chunk
+build-system: autotools
+configure-commands:
+- |
+  ./configure --prefix="$PREFIX"  \
+              --enable-shared     \
+              --with-ensurepip=upgrade \
+              --with-system-expat \
+              --with-system-ffi
+post-install-commands:
+- ln -sf python2.7 "$DESTDIR"/"$PREFIX"/bin/python
+- test -x "$DESTDIR"/"$PREFIX"/bin/python2 || ln -s python2.7 "$DESTDIR"/"$PREFIX"/bin/python2

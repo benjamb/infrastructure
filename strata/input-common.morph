@@ -3,11 +3,13 @@ kind: stratum
 build-depends:
 - morph: strata/foundation.morph
 - morph: strata/xorg-util-macros-common.morph
+- morph: strata/x-common.morph
 chunks:
 - name: mtdev
   repo: upstream:mtdev-git
   ref: 4381b78fea54de0e775bf54952b2f95e5a06c57d
   unpetrify-ref: v1.1.5
+  build-system: autotools
 - name: xkeyboard-config
   morph: strata/input-common/xkeyboard-config.morph
   repo: upstream:xkeyboard-config
@@ -17,10 +19,19 @@ chunks:
   repo: upstream:libevdev
   ref: 6f03fd49fb949e46ebccb5dfb54489584896c791
   unpetrify-ref: libevdev-1.4.2
+  build-system: autotools
 - name: libinput
   repo: upstream:libinput
-  ref: 12df380698531472d495534ed356722478563707
-  unpetrify-ref: 0.15.0
+  ref: a52cc616b4c00d0975a3311a2a06057bdb419ba2
+  unpetrify-ref: 1.0.1
+  build-system: autotools
   build-depends:
   - mtdev
   - libevdev
+- name: libxkbcommon-no-x11
+  repo: upstream:xorg-lib-libxkbcommon
+  ref: c43c3c866eb9d52cd8f61e75cbef1c30d07f3a28
+  morph: strata/input-common/libxkbcommon-no-x11.morph
+  unpetrify-ref: xkbcommon-0.5.0
+  build-depends:
+    - xkeyboard-config

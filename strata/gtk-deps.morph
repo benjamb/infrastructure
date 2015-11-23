@@ -7,10 +7,10 @@ build-depends:
 - morph: strata/x-common.morph
 chunks:
 - name: pango
-  morph: strata/gtk-deps/pango.morph
   repo: upstream:pango
-  ref: e0a21abf52a0b7588b1aa3357818948816ed9103
-  unpetrify-ref: 1.36.8
+  ref: 29a712f1af7bbb15bdc9d7e09cbf58517edf8c15
+  unpetrify-ref: 1.38.0
+  build-system: autotools
 - name: shared-mime-info
   morph: strata/gtk-deps/shared-mime-info.morph
   repo: upstream:shared-mime-info
@@ -23,16 +23,33 @@ chunks:
   unpetrify-ref: 2.30.8
 - name: atk
   repo: upstream:atk
-  ref: 3f9e43b94364053fd16eb53391667d161d0dae12
-  unpetrify-ref: ATK_2_16_0
+  ref: eacc351ec797f5fe477844e3012d460c195b4d88
+  unpetrify-ref: ATK_2_18_0
+  build-system: autotools
 - name: at-spi2-core
+  morph: strata/gtk-deps/at-spi2-core.morph
   repo: upstream:at-spi2-core
-  ref: 96c2842088008670e72739ea7921d654487a57fb
-  unpetrify-ref: AT_SPI2_CORE_2_14_1
+  ref: 703990c0c9b39aa98fa37d07e23af88cf7549388
+  unpetrify-ref: AT_SPI2_CORE_2_18_1
 - name: at-spi2-atk
+  morph: strata/gtk-deps/at-spi2-atk.morph
   repo: upstream:at-spi2-atk
-  ref: 2c220ff6565c4f02428a0c80267616a677e81ac9
-  unpetrify-ref: AT_SPI2_ATK_2_14_1
+  ref: 94e7613c179960b71cb3e8541623bc0c87626f7c
+  unpetrify-ref: AT_SPI2_ATK_2_18_1
   build-depends:
   - at-spi2-core
   - atk
+- name: libcroco
+  repo: upstream:libcroco
+  ref: 9207f349d1c97618ab38e6b095207bbd8184d844
+  unpetrify-ref: 0.6.8-30-g9207f34
+  build-system: autotools
+- name: librsvg
+  repo: upstream:librsvg
+  ref: 25d5f8b7076535fecb972d6454807ba56452991a
+  unpetrify-ref: 2.40.10
+  build-system: autotools
+  build-depends:
+  - gdk-pixbuf
+  - libcroco
+  - pango

@@ -29,8 +29,12 @@ strata:
   morph: strata/erlang.morph
 - name: ruby
   morph: strata/ruby.morph
+- name: python2-core
+  morph: strata/python2-core.morph
 - name: nodejs
   morph: strata/nodejs.morph
+- name: icu-common
+  morph: strata/icu-common.morph
 configuration-extensions:
 - extensions/set-hostname
 - extensions/add-config-files

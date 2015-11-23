@@ -4,7 +4,7 @@ build-depends:
 - morph: strata/core.morph
 - morph: strata/ostree-core.morph
 - morph: strata/python-cliapp.morph
-- morph: strata/python-core.morph
+- morph: strata/python2-core.morph
 - morph: strata/python-pygobject.morph
 - morph: strata/python-wsgi.morph
 chunks:
@@ -34,10 +34,12 @@ chunks:
   repo: upstream:python-packages/pylru
   ref: 221dd259f5c34562c835611d1cf62384b9019da4
   unpetrify-ref: master
+  build-system: python-distutils
 - name: morph
   repo: baserock:baserock/morph
-  ref: 60c378c55d5d0ef89184b49ae95e445f8de422e3
+  ref: fad8048de66fe6aeaa0478864914bb773f51ed3e
   unpetrify-ref: master
+  build-system: python-distutils
   build-depends:
   - cmdtest
   - pyfilesystem
@@ -45,12 +47,8 @@ chunks:
 
 # This chunk isn't required to use Morph, but is required to do automated
 # migrations within the definitions.git repo.
-#
-# Currently we include a forked version that includes some support for
-# preserving blank lines. This is quite useful when operating on .morph files.
-# The patches have been submitted upstream here:
-# https://bitbucket.org/ruamel/yaml/pull-request/3
 - name: ruamel.yaml
   repo: upstream:python-packages/ruamel.yaml
-  ref: 840b3ccdb306c6aa6d874474e621ae5596595ae4
-  unpetrify-ref: baserock/sam/blank-line-preservation-1
+  ref: f3de88b82bf5e3902c44f6c30aed065e56626ee6
+  unpetrify-ref: 0.10.5
+  build-system: python-distutils

@@ -1,0 +1,73 @@
+name: xfce-system
+kind: system
+description: A system with the XFCE desktop
+arch: x86_64
+strata:
+- name: build-essential
+  morph: strata/build-essential.morph
+- name: core
+  morph: strata/core.morph
+- name: coreutils-common
+  morph: strata/coreutils-common.morph
+- name: python2-core
+  morph: strata/python2-core.morph
+- name: foundation
+  morph: strata/foundation.morph
+- name: bsp-x86_64-generic
+  morph: strata/bsp-x86_64-generic.morph
+- name: connectivity
+  morph: strata/connectivity.morph
+- name: connman-common
+  morph: strata/connman-common.morph
+- name: input-common
+  morph: strata/input-common.morph
+- name: audio-bluetooth
+  morph: strata/audio-bluetooth.morph
+- name: libdrm-common
+  morph: strata/libdrm-common.morph
+- name: mesa-common
+  morph: strata/mesa-common.morph
+- name: graphics-common
+  morph: strata/graphics-common.morph
+- name: wayland-generic
+  morph: strata/wayland-generic.morph
+- name: x-common
+  morph: strata/x-common.morph
+- name: x-generic
+  morph: strata/x-generic.morph
+- name: x-drivers
+  morph: strata/x-drivers.morph
+- name: multimedia-common
+  morph: strata/multimedia-common.morph
+- name: multimedia-gstreamer
+  morph: strata/multimedia-gstreamer.morph
+- name: gtk-deps
+  morph: strata/gtk-deps.morph
+- name: gtk2
+  morph: strata/gtk2.morph
+- name: tools
+  morph: strata/tools.morph
+- name: devtools
+  morph: strata/devtools.morph
+- name: python-cliapp
+  morph: strata/python-cliapp.morph
+- name: python-pygobject
+  morph: strata/python-pygobject.morph
+- name: python-wsgi
+  morph: strata/python-wsgi.morph
+- name: libsoup-common
+  morph: strata/libsoup-common.morph
+- name: glib-common
+  morph: strata/glib-common.morph
+- name: ostree-core
+  morph: strata/ostree-core.morph
+- name: morph-utils
+  morph: strata/morph-utils.morph
+- name: xfce
+  morph: strata/xfce.morph
+configuration-extensions:
+- extensions/set-hostname
+- extensions/add-config-files
+- extensions/nfsboot
+- extensions/install-files
+- extensions/install-essential-files

@@ -18,14 +18,17 @@ chunks:
   repo: upstream:bzr-tarball
   ref: e61c7edb4789abcd0f73c30fe719fa6fea478a52
   unpetrify-ref: baserock/morph
+  build-system: python-distutils
 - name: python-fastimport
   repo: upstream:python-fastimport
   ref: 6500a5e7d82651ade9002d44e3ecc71a50302616
   unpetrify-ref: baserock/morph
+  build-system: python-distutils
 - name: bzr-fastimport
   repo: upstream:bzr-fastimport
   ref: b3cda9967f857127bd4dab5eb72223a95916f5ea
   unpetrify-ref: baserock/morph
+  build-system: python-distutils
   build-depends:
   - bzr-tarball
   - python-fastimport
@@ -55,13 +58,14 @@ chunks:
   repo: upstream:perl-dbd-sqlite-tarball
   ref: 485b97be9f2f2abf5a40923b5fd85f75714a8c02
   unpetrify-ref: baserock/morph
+  build-system: cpan
   build-depends:
   - perl-dbi-tarball
 - name: libserf
   morph: strata/lorry/libserf.morph
   repo: upstream:libserf-tarball
-  ref: 6f61a1acd01dc2ad1d2f5c1f7458702c77c69f9c
-  unpetrify-ref: baserock/morph
+  ref: f143c3cab79c59dd57124f19d16ac35253843136
+  unpetrify-ref: master
   build-depends:
   - libapr
   - libapr-util
@@ -106,7 +110,7 @@ chunks:
 - name: lorry
   morph: strata/lorry/lorry.morph
   repo: baserock:baserock/lorry
-  ref: a55f642cd3e2d7e330cf96ff9f9eb5d03ae39192
+  ref: 37ebbacd09145fa6bbaf54dac2a211a5d83f01a5
   unpetrify-ref: master
   build-depends:
   - bzr-tarball

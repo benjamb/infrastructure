@@ -5,10 +5,18 @@ build-depends:
 - morph: strata/llvm-common.morph
 - morph: strata/libdrm-common.morph
 - morph: strata/wayland-generic.morph
-- morph: strata/python-core.morph
+- morph: strata/python2-core.morph
+- morph: strata/x-common.morph
 chunks:
 - name: mesa
   morph: strata/mesa-common/mesa.morph
   repo: upstream:mesa
-  ref: 635ad274470a064100ff6aa38ede83d748ae07cf
-  unpetrify-ref: baserock/mesa-10.6.0-rc1-jetson
+  ref: 4f1e500150be2e82a2d7eb954f7198cc0c5cbec1
+  unpetrify-ref: mesa-11.0.0
+- name: libepoxy
+  repo: upstream:libepoxy
+  ref: e2c33af5bfcfc9d168f9e776156dd47c33f428b3
+  unpetrify-ref: v1.3.1
+  build-system: autotools
+  build-depends:
+  - mesa

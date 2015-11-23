@@ -40,12 +40,18 @@ systems:
       initramfs-build-system-x86_64:
         type: extensions/initramfs
         location: boot/initramfs.gz
+- morph: systems/build-system-armv7lhf-rootfs.morph
+  deploy:
+    build-system-armv7lhf-rootfs:
+      type: extensions/tar
+      location: build-system-armv7lhf-rootfs.tar
+      HOSTNAME: build-system-armv7lhf-rootfs
 - morph: systems/build-system-armv7lhf-jetson.morph
   deploy:
     build-system-armv7lhf-jetson:
       type: extensions/rawdisk
       location: build-system-armv7lhf-jetson.img
-      DISK_SIZE: 2G
+      DISK_SIZE: 3G
       BOOT_DEVICE: /dev/mmcblk0p1
       ROOT_DEVICE: /dev/mmcblk0p2
       DTB_PATH: boot/tegra124-jetson-tk1.dtb
@@ -63,6 +69,9 @@ systems:
       KERNEL_ARGS: vga=788
       INITRAMFS_PATH: boot/initramfs.gz
       HOSTNAME: genivi-baseline-system-x86-64-generic
+      GENIVI_WESTON_BACKEND: fbdev
+      GENIVI_WESTON_CONFIG: baseline
+      GENIVI_WESTON_AUTOSTART: False
   subsystems:
   - morph: systems/initramfs-x86_64.morph
     deploy:
@@ -83,3 +92,6 @@ systems:
       KERNEL_ARGS: cma=256M console=tty0 console=ttyS0,115200n8 no_console_suspend=1
         nouveau.pstate=1
       HOSTNAME: genivi-baseline-system-armv7lhf-jetson
+      GENIVI_WESTON_BACKEND: drm
+      GENIVI_WESTON_CONFIG: baseline
+      GENIVI_WESTON_AUTOSTART: False

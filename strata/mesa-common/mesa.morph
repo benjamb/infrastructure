@@ -14,9 +14,9 @@ configure-commands:
     GALLIUMDRIVERS=yes
     ;;
   esac
-  ./autogen.sh --prefix="$PREFIX" \
+  ./autogen.sh --prefix="$PREFIX" --sysconfdir=/etc \
       --enable-gles2 \
-      --disable-glx \
-      --with-egl-platforms=drm,wayland \
+      --with-egl-platforms=drm,wayland,x11 \
       --with-gallium-drivers="$GALLIUMDRIVERS" \
-      --with-dri-drivers="$DRIDRIVERS"
+      --with-dri-drivers="$DRIDRIVERS" \
+      --disable-llvm-shared-libs

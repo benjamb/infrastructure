@@ -37,10 +37,8 @@ strata:
   morph: strata/lorry.morph
 - name: baserock-import
   morph: strata/baserock-import.morph
-- name: python-core
-  morph: strata/python-core.morph
-- name: python3-core
-  morph: strata/python3-core.morph
+- name: python2-core
+  morph: strata/python2-core.morph
 - name: python-tools
   morph: strata/python-tools.morph
 - name: python-common
@@ -59,6 +57,8 @@ strata:
   morph: strata/ostree-core.morph
 - name: coreutils-common
   morph: strata/coreutils-common.morph
+- name: compilers-extra
+  morph: strata/compilers-extra.morph
 configuration-extensions:
 - extensions/set-hostname
 - extensions/add-config-files

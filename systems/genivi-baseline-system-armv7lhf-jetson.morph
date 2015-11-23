@@ -31,8 +31,8 @@ strata:
   morph: strata/wayland-generic.morph
 - name: graphics-common
   morph: strata/graphics-common.morph
-- name: input-common
-  morph: strata/input-common.morph
+- name: input-genivi
+  morph: strata/input-genivi.morph
 - name: mesa-common
   morph: strata/mesa-common.morph
 - name: x-common
@@ -47,3 +47,4 @@ configuration-extensions:
 - extensions/strip-gplv3
 - extensions/fstab
 - extensions/install-essential-files
+- extensions/genivi
