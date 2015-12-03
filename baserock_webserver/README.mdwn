@@ -1,0 +1,12 @@
+##
+## baserock.org - webserver
+##
+## Currently being used to host files for download.baserock.org
+##
+
+* Webserver config file:
+  - etc/charokee/cherokee.conf
+
+* SELinux needs to be tweaked:
+  - etc/selinux/config
+
