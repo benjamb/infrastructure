@@ -10,3 +10,6 @@
 * SELinux needs to be tweaked:
   - etc/selinux/config
 
+* An attached volume which holds all the download files is mounted @ /srv/download.baserock.org:
+  - etc/fstab
+

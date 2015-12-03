@@ -1,0 +1,11 @@
+
+#
+# /etc/fstab
+# Created by anaconda on Thu May 21 23:58:09 2015
+#
+# Accessible filesystems, by reference, are maintained under '/dev/disk'
+# See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info
+#
+UUID=01bc7316-b1f4-45c9-a23a-00c5a2336ef2	/				ext4	defaults,noatime	1	1
+UUID=4f098a3a-24ed-4df1-839c-2413f29f9c00	/srv/download.baserock.org	ext4	defaults,noatime	1	1
+
