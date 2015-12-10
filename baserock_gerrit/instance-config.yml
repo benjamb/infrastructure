@@ -9,7 +9,7 @@
 - hosts: gerrit
   gather_facts: False
   vars:
-    GERRIT_VERSION: 2.11.4
+    GERRIT_VERSION: 2.11.5
 
     # Download from http://www.oracle.com/technetwork/java/javase/downloads/server-jre8-downloads-2133154.html
     JRE_FILE: server-jre-8u40-linux-x64.tar.gz
@@ -99,8 +99,8 @@
 
         # Bouncy Castle Crypto APIs for Java. The interactive `gerrit init`
         # command recommends installing these libraries, and who am I to argue?
-        - http://www.bouncycastle.org/download/bcpkix-jdk15on-149.jar
-        - http://www.bouncycastle.org/download/bcprov-jdk15on-149.jar
+        - http://www.bouncycastle.org/download/bcpkix-jdk15on-151.jar
+        - http://www.bouncycastle.org/download/bcprov-jdk15on-151.jar
 
     - name: install gerrit.config
       template: src=gerrit.config dest=/srv/gerrit/etc/gerrit.config
