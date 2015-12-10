@@ -105,6 +105,22 @@
     - name: install gerrit.config
       template: src=gerrit.config dest=/srv/gerrit/etc/gerrit.config
 
+    - name: install images for branding
+      copy: src=branding/{{ item }} dest=/srv/gerrit/static/{{ item }}
+      with_items:
+      - baserock-logo.png
+      - openstack-page-bkg.jpg
+      sudo: yes
+      sudo_user: gerrit
+
+    - name: install HTML and CSS for branding
+      copy: src=branding/{{ item }} dest=/srv/gerrit/etc/{{ item }}
+      with_items:
+      - GerritSiteHeader.html
+      - GerritSite.css
+      sudo: yes
+      sudo_user: gerrit
+
     - name: set database password
       command: git config -f /srv/gerrit/etc/secure.config database.password "{{ baserock_gerrit_password }}"
       sudo: yes
