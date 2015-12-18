@@ -51,3 +51,5 @@ storyboard_mysql_user_password: "{{ baserock_storyboard_password }}"
 storyboard_ssl_cert: ../certs/baserock.org-ssl-certificate-temporary-dsilverstone.full.cert
 storyboard_ssl_key: ../private/baserock.org-ssl-certificate-temporary-dsilverstone.pem
 storyboard_resolved_ssl_ca: ../certs/startcom-class2-ca-chain-certificate.cert
+
+storyboard_access_token_ttl: 31622400
