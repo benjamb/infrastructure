@@ -1,0 +1,14 @@
+# Instance-specific configuration for the baserock.org StoryBoard instance.
+---
+- hosts: storyboard
+  vars_files:
+  - ../baserock_database/baserock_storyboard.database_password.yml
+  - ../baserock_database/root.database_password.yml
+  - storyboard-vars.yml
+  sudo: yes
+  roles:
+  # We are using a new database here because StoryBoard is not yet compatible
+  # with MariaDB
+  - { role: geerlingguy.mysql }
+  - { role: Mayeu.RabbitMQ }
+  - { role: palvarez89.storyboard }
