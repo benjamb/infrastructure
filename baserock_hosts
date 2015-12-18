@@ -23,11 +23,11 @@ frontend-haproxy ansible_ssh_host=185.43.218.170
 database-mariadb ansible_ssh_host=192.168.222.30
 mail ansible_ssh_host=192.168.222.111
 openid ansible_ssh_host=192.168.222.67
-storyboard ansible_ssh_host=192.168.222.40
 webserver ansible_ssh_host=192.168.222.127
 
 [ubuntu]
 paste ansible_ssh_host=192.168.222.6
+storyboard ansible_ssh_host=192.168.222.131
 #testgerrit ansible_ssh_host=192.168.222.46
 
 

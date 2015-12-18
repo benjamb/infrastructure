@@ -483,27 +483,29 @@ the final SSH command showing any errors.
     ssh $GERRIT_ADMIN_USERNAME@gerrit.baserock.org -p 29418 gerrit plugin ls
     ssh $GERRIT_ADMIN_USERNAME@gerrit.baserock.org -p 29418 replication start --all --wait
 
-### Storyboard
+### StoryBoard
 
-We use a slightly adapted version of
-<https://github.com/openstack-infra/puppet-storyboard> to deploy Storyboard.
+    ansible-galaxy install -r baserock_storyboard/ansible-galaxy-roles.yaml -p ./baserock_storyboard/roles
 
-There's no development deployment for Storyboard at this time: the Puppet
-script expects to start services using systemd, and that doesn't work by
-default in a Docker container.
+    nova volume-create \
+        --display-name storyboard-volume \
+        --display-description 'Storyboard volume' \
+        --volume-type Ceph \
+        100
 
-To deploy the production version:
-
-    packer build -only=production baserock_storyboard/packer_template.json
-    nova boot openid_provider
-        --flavor dc1.1x1 --image 'baserock_storyboard' \
-        --key-name=$keyname storyboard.baserock.org \
-        --nic="net-id=$network_id"
-        --security-groups default,web-server
+    nova boot storyboard.baserock.org \
+        --key-name $keyname \
+        --flavor 'dc1.1x1.20' \
+        --image $ubuntu_image_id \
+        --nic "net-id=$network_id,v4-fixed-ip=192.168.222.131" \
+        --security-groups default,web-server \
         --user-data baserock-ops-team.cloud-config
 
-Storyboard deployment does not yet work fully (you can manually kludge it into
-working after deploying it, though).
+    nova volume-attach storyboard.baserock.org <volume-id> /dev/vdb
+
+    ansible-playbook -i hosts baserock_storyboard/instance-config.yml
+    ansible-playbook -i hosts baserock_storyboard/instance-backup-config.yml
+    ansible-playbook -i hosts baserock_storyboard/instance-storyboard-config.yml
 
 ### Masons
 

@@ -1,0 +1,50 @@
+# For rabbitmq role
+rabbitmq_host: localhost
+rabbitmq_port: 5672
+rabbitmq_vhost: '/'
+rabbitmq_user: storyboard
+rabbitmq_user_password: storyboard
+rabbitmq_ssl: false
+rabbitmq_vhost_definitions:
+  - name:    "{{ rabbitmq_vhost }}"
+rabbitmq_users_definitions:
+  - vhost:    "{{ rabbitmq_vhost }}"
+    user:     "{{ rabbitmq_user }}"
+    password: "{{ rabbitmq_user_password }}"
+rabbitmq_conf_tcp_listeners_address: '127.0.0.1'
+
+# For mysql role
+mysql_host: localhost
+mysql_port: 3306
+mysql_database: storyboard
+mysql_user: storyboard
+mysql_user_password: "{{ baserock_storyboard_password }}"
+mysql_root_password: "{{ root_password }}"
+mysql_databases:
+  - name: "{{ mysql_database }}"
+mysql_users:
+  - name: "{{ mysql_user }}"
+    host: "{{ mysql_host }}"
+    password: "{{ mysql_user_password }}"
+    priv: "{{ mysql_database }}.*:ALL"
+mysql_packages:
+  - mysql-server-5.6
+  - python-mysqldb
+
+storyboard_enable_email: 'True'
+storyboard_email_sender: StoryBoard (Do Not Reply) <do_not_reply@baserock.org>
+storyboard_email_smtp_host: 192.168.222.111
+storyboard_email_smtp_timeout: 10
+
+storyboard_fqdn: storyboard.baserock.org
+storyboard_openid_url: https://openid.baserock.org/openid/
+
+storyboard_projects: projects.yaml
+storyboard_superusers: users.yaml
+storyboard_mysql_user_password: "{{ baserock_storyboard_password }}"
+
+storyboard_ssl_cert: ../certs/baserock.org-ssl-certificate-temporary-dsilverstone.full.cert
+storyboard_ssl_key: ../private/baserock.org-ssl-certificate-temporary-dsilverstone.pem
+storyboard_resolved_ssl_ca: ../certs/startcom-class2-ca-chain-certificate.cert
+
+storyboard_access_token_ttl: 31622400

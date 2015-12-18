@@ -29,3 +29,8 @@
     root@192.168.222.30: /srv/backup/storyboard-database \
   && date > /srv/backup/storyboard-database.timestamp
 
+# Storyboard Database
+/usr/bin/rsync --archive --delete-before --delete-excluded \
+    --hard-links --human-readable --progress --sparse \
+    root@192.168.222.30: /srv/backup/storyboard-database
+date > /srv/backup/storyboard-database.timestamp

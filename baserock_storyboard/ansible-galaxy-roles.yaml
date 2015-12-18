@@ -1,0 +1,4 @@
+# Ansible Galaxy roles needed
+- palvarez89.storyboard
+- Mayeu.RabbitMQ,1.4.0
+- geerlingguy.mysql,1.5.0
