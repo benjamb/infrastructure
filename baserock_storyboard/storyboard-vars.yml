@@ -36,11 +36,6 @@ storyboard_email_sender: StoryBoard (Do Not Reply) <do_not_reply@baserock.org>
 storyboard_email_smtp_host: 192.168.222.111
 storyboard_email_smtp_timeout: 10
 
-# Install from this branch that includes a patch to enable
-# email notifications. This patch is about to be merged upstream. 
-storyboard_webclient_repo: https://github.com/palvarez89/storyboard-webclient.git
-storyboard_webclient_version: email-notifications
-
 storyboard_fqdn: storyboard.baserock.org
 storyboard_openid_url: https://openid.baserock.org/openid/
 
