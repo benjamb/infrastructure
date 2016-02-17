@@ -131,46 +131,6 @@ NOTE: to run these playbooks you need to have the public ssh key of the backups
 instance in `keys/backup.key.pub`.
 
 
-Deployment with Packer
-----------------------
-
-> **NOTE**: I no longer think that Packer is the right tool for our needs. This
-> is partly because of critical bugs that have not been fixed since I started
-> using it (e.g. <https://github.com/mitchellh/packer/issues/1462>), and partly
-> because I realised that I was just using it to wrap `nova` and
-> `ansible-playbook`, and it is simple enough to use those commands directly.
->
-> I had hoped that we could make use of Packer's multiple backends in order to
-> test systems locally in Docker before deploying them to OpenStack. It turns
-> out Docker is sufficiently different to OpenStack that this doesn't make life
-> any easier during development. Networking setup is different, systemd doesn't
-> work inside Docker by default, base images are different in other ways, etc.
->
-> So I recommend not using Packer for future systems, and I will try to
-> migrate the definitions for the existing ones to just use Ansible.
->
-> Sam Thursfield 10/04/15
-
-Some of the systems are built with [Packer]. I chose Packer because it provides
-similar functionality to the `morph deploy` command, although its
-implementation makes different tradeoffs. The documentation below shows the
-commands you need to run to build systems with Packer. Some of the systems can
-be deployed as Docker images as well as OpenStack images, to enable local
-development and testing.
-
-The following error from Packer means that you didn't set your credentials
-correctly in the `OS_...` environment variables, or they were not accepted.
-
-> Build 'production' errored: Missing or incorrect provider
-
-The the Packer tool requires a floating IP to be available at the time a system
-is being deployed to OpenStack. Currently 185.43.218.169 should be used for
-this.  If you specify a floating IP that is in use by an existing instance, you
-will steal it for your own instance and probably break one of our web services.
-
-[Packer]: http://www.packer.io/
-
-
 Systems
 -------
 
@@ -279,34 +239,26 @@ receive mail, or relay mail sent by systems outside the baserock.org cloud.
 
 ### OpenID provider
 
-To deploy a development instance:
-
-    packer build -only=development baserock_openid_provider/packer_template.json
-    baserock_openid_provider/develop.sh
-    # Now you have a root shell inside your container
-    cd /srv/baserock_openid_provider
-    python ./manage.py runserver 0.0.0.0:80
-    # Now you can browse to http://localhost:80/ and see the server.
-
 To deploy this system to production:
 
     vim baserock_openid_provider/baserock_openid_provider/settings.py
 
-Edit the DATABASES['default']['HOST'] to point to the fixed IP of the
-'database' machine, and check the settings. See:
-https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
-
-    packer build -only=production baserock_openid_provider/packer_template.json
+Check the DATABASE_HOST IP, and check the other settings against the [Django
+deployment
+checklist](https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/).
 
     nova boot openid.baserock.org \
         --key-name $keyname \
         --flavor dc1.1x1 \
-        --image 'baserock_openid_provider' \
-        --nic "net-id=$network_id',v4-fixed-ip=192.168.222.67" \
-        --security-groups default,web-server
+        --image $fedora_image_id \
+        --nic "net-id=$network_id,v4-fixed-ip=192.168.222.144" \
+        --security-groups default,web-server \
         --user-data ./baserock-ops-team.cloud-config
 
+    ansible-playbook -i hosts baserock_openid_provider/image-config.yml
     ansible-playbook -i hosts baserock_openid_provider/instance-config.yml
+
+The baserock_openid_provider system is stateless.
 
 To change Cherokee configuration, it's usually easiest to use the
 cherokee-admin tool in a running instance. SSH in as normal but forward port

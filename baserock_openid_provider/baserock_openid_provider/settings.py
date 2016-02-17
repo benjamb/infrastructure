@@ -12,6 +12,9 @@ import yaml
 
 import os
 
+# You must ensure this is the correct IP address!
+DATABASE_HOST = '192.168.222.30'
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 # Quick-start development settings - unsuitable for production
@@ -114,12 +117,7 @@ DATABASES = {
         'USER': 'openid',
         'PORT': '3306',
 
-        # You must change this to the correct IP address when
-        # deploying to production! For development deployments this
-        # gets the IP of the 'baserock-database' container from the
-        # environment, which Docker will have set if you passed it
-        # `--link=baseock-database:db`.
-        'HOST': os.environ.get('DB_PORT_3306_TCP_ADDR', '192.168.222.30')
+        'HOST': DATABASE_HOST
     }
 }
 

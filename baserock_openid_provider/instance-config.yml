@@ -7,9 +7,6 @@
   gather_facts: False
   sudo: yes
   tasks:
-  - name: ensure system up to date
-    yum: name=* state=latest
-
   - name: install database password
     copy: src=../database/baserock_openid_provider.database_password.yml dest=/etc owner=cherokee group=cherokee mode=400
 
