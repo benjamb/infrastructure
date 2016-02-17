@@ -44,11 +44,207 @@ To run a playbook:
 
 To run an ad-hoc command (upgrading, for example):
 
-    ansible-playbook -i hosts fedora -m command -a 'sudo yum update -y'
-    ansible-playbook -i hosts ubuntu -m command -a 'sudo apt-get update -y'
+    ansible -i hosts fedora -m command -a 'sudo yum update -y'
+    ansible -i hosts ubuntu -m command -a 'sudo apt-get update -y'
 
 [Ansible]: http://www.ansible.com
 
+
+Security updates
+----------------
+
+Fedora security updates can be watched here:
+<https://bodhi.fedoraproject.org/updates/?type=security>. Ubuntu issues
+security advisories here: <http://www.ubuntu.com/usn/>.
+The Baserock reference systems doesn't have such a service. The [LWN
+Alerts](https://lwn.net/Alerts/) service gives you info from all major Linux
+distributions.
+
+If there is a vulnerability discovered in some software we use, we might need
+to upgrade all of the systems that use that component at baserock.org.
+
+Bear in mind some systems are not accessible except via the frontend-haproxy
+system. Those are usually less at risk than those that face the web directly.
+Also bear in mind we use OpenStack security groups to block most ports.
+
+### Prepare the patch for Baserock systems
+
+First, you need to update the Baserock reference system definitions with a
+fixed version of the component. Build that and test that it works. Submit
+the patch to gerrit.baserock.org, get it reviewed, and merged. Then cherry
+pick that patch into infrastructure.git.
+
+This a long-winded process. There are shortcuts you can take, although
+someone still has to complete the process described above at some point.
+
+* You can modify the infrastructure.git definitions directly and start rebuilding
+  the infrastructure systems right away, to avoid waiting for the Baserock patch
+  review process.
+
+* You can add the new version of the component as a stratum that sits above
+  everything else in the build graph. For example, to do a 'hot-fix' for GLIBC,
+  add a 'glibc-hotfix' stratum containing the new version to all of the systems
+  you need to upgrade. Rebuilding them will be quick because you just need to
+  build GLIBC, and can reuse the cached artifacts for everything else. The new
+  GLIBC will overwrite the one that is lower down in the build graph in the
+  resulting filesystem. Of course, if the new version of the component is not
+  ABI compatible then this approach will break things. Be careful.
+
+### Check the inventory
+
+Make sure the Ansible inventory file is up to date, and that you have access to
+all machines. Run this:
+
+    ansible \* -i ./hosts -m ping
+
+You should see lots of this sort of output:
+
+    mail | success >> {
+        "changed": false,
+        "ping": "pong"
+    }
+
+    frontend-haproxy | success >> {
+        "changed": false,
+        "ping": "pong"
+    }
+
+You may find some host key errors like this:
+
+    paste | FAILED => SSH Error: Host key verification failed.
+    It is sometimes useful to re-run the command using -vvvv, which prints SSH debug output to help diagnose the issue.
+
+If you have a host key problem, that could be because somebody redeployed
+the system since the last time you connected to it with SSH, and did not
+transfer the SSH host keys from the old system to the new system. Check with
+other ops teams members about this. If you are sure the new host keys can
+be trusted, you can remove the old ones with `ssh-keygen -R 192.168.x.y`, where 192.168.x.y is the internal IP address of the machine. You'll then be prompted to accept the new ones when you run Ansible again.
+
+Once all machines respond to the Ansible 'ping' module, double check that
+every machine you can see in the OpenStack Horizon dashboard has a
+corresponding entry in the 'hosts' file, to ensure the next steps operate
+on all of the machines.
+
+### Check and upgrade Fedora systems
+
+> Bear in mind that only the latest 2 versions of Fedora receive security
+updates. If any machines are not running the latest version of Fedora,
+you should redeploy them with the latest version. See the instructions below
+on how to (re)deploy each machine. You should deploy a new instance of a system
+and test it *before* terminating the existing instance. Switching over should
+be a matter of changing either its floating IP address or the IP address in
+baserock_frontend/haproxy.conf.
+
+You can find out what version of Fedora is in use with this command:
+
+    ansible fedora -i hosts -m setup  -a 'filter=ansible_distribution_version'
+
+Check what version of a package is in use with this command (using GLIBC as an
+example). You can compare this against Fedora package changelogs at
+[Koji](https://koji.fedoraproject.org).
+
+    ansible fedora -i hosts -m command -a 'rpm -q glibc --qf "%{VERSION}.%{RELEASE}\n"'
+
+You can see what updates are available using the `dnf updateinfo info' command.
+
+    ansible -i hosts fedora -m command -a 'dnf updateinfo info glibc'
+
+You can then use `dnf upgrade -y` to install all available updates. Or give the
+name of a package to update just that package. Be aware that DNF is quite slow,
+and if you forget to pass `-y` then it will hang forever waiting for input.
+
+You will then need to restart services. The `dnf needs-restarting` command might be
+useful, but rebooting the whole machine is probably easiest.
+
+### Check and upgrade Ubuntu systems
+
+> Bear in mind that only the latest and the latest LTS release of Ubuntu receive any
+security updates.
+
+Find out what version of Ubuntu is in use with this command:
+
+    ansible ubuntu -i hosts -m setup  -a 'filter=ansible_distribution_version'
+
+Check what version of a given package is in use with this command (using GLIBC
+as an example).
+
+    ansible -i hosts ubuntu -m command -a 'dpkg-query --show libc6'
+
+Check for available updates, and what they contain:
+
+    ansible -i hosts ubuntu -m command -a 'apt-cache policy libc6'
+    ansible -i hosts ubuntu -m command -a 'apt-get changelog libc6' | head -n 20
+
+You can update all the packages with:
+
+    ansible -i hosts ubuntu -m command -a 'apt-get upgrade -y' --sudo
+
+You will then need to restart services. Rebooting the machine is probably
+easiest.
+
+### Check and upgrade Baserock systems
+
+Check what version of a given package is in use with this command (using GLIBC
+as an example). Ideally Baserock reference systems would have a query tool for
+this info, but for now we have to look at the JSON metadata file directly.
+
+    ansible -i hosts baserock -m command \
+        -a "grep '\"\(sha1\|repo\|original_ref\)\":' /baserock/glibc-bins.meta"
+
+The default Baserock machine layout uses Btrfs for the root filesystem. Filling
+up a Btrfs disk results in unpredictable behaviour. Before deploying any system
+upgrades, check that each machine has enough free disk space to hold an
+upgrade. Allow for at least 4GB free space, to be safe.
+
+    ansible -i hosts baserock -m command -a "df -h /"
+
+A good way to free up space is to remove old system-versions using the
+`system-version-manager` tool. There may be other things that are
+unnecessarily taking up space in the root file system, too.
+
+Ideally, at this point you've prepared a patch for definitions.git to fix
+the security issue in the Baserock reference systems, and it has been merged.
+In that case, pull from the reference systems into infrastructure.git, using
+`git pull git://git.baserock.org/baserock/baserock/definitions master`.
+
+If the necessary patch isn't merged in definitions.git, it's still best to
+merge 'master' from there into infrastructure.git, and then cherry-pick the
+patch from Gerrit on top.
+
+You then need to build and upgrade the systems one by one. Do this from the
+'devel-system' machine in the same OpenStack cloud that hosts the
+infrastructure. Baserock upgrades currently involve transferring the whole
+multi-gigabyte system image, so you *must* have a fast connection to the
+target.
+
+Each Baserock system has its own deployment instructions. Each should have
+a deployment .morph file that you can pass to `morph upgrade`. For example,
+to deploy an upgrade git.baserock.org:
+
+    morph upgrade --local-changes=ignore \
+        baserock_trove/baserock_trove.morph gbo.VERSION_LABEL=2016-02-19
+
+Once this completes successfully, rebooting the system should bring up the
+new system. You may want to check that the new `/etc` is correct; you can
+do this inside the machine by mounting `/dev/vda` and looking in `systems/$VERSION_LABEL/run/etc`.
+
+If you want to revert the upgrade, use `system-version-manager list` and
+`system-version-manager set-default <old-version>` to set the previous
+version as the default, then reboot. If the system doesn't boot at all,
+reboot it while you have the graphical console open in Horizon, and you
+should be able to press `ESC` fast enough to get the boot menu open. This
+will allow booting into previous versions of the system. (You shouldn't
+have any problems though since of course we test everything regularly).
+
+Beware of <https://storyboard.baserock.org/#!/story/77>.
+
+For cache.baserock.org, you can reuse the deployment instructions for
+git.baserock.org. Try:
+
+    morph upgrade --local-changes=ignore \
+        baserock_trove/baserock_trove.morph \
+        gbo.update-location=root@cache.baserock.org
+        gbo.VERSION_LABEL=2016-02-19
 
 Deployment to OpenStack
 -----------------------
@@ -173,6 +369,11 @@ the frontend, do the following:
 
 OpenStack doesn't provide any kind of internal DNS service, so you must put the
 fixed IP of each instance.
+
+The internal IP address of this machine is hardcoded in some places (beyond the
+usual haproxy.cfg file), use 'git grep' to find all of them. You'll need to
+update all the relevant config files. We really need some internal DNS system
+to avoid this hassle.
 
 ### Database
 
