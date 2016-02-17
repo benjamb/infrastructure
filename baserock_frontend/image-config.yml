@@ -4,24 +4,28 @@
   gather_facts: false
   sudo: yes
   tasks:
+  # See: https://fedoramagazine.org/getting-ansible-working-fedora-23/
+  - name: install Python2 and required deps for Ansible modules
+    raw: dnf install -y python2 python2-dnf
+
   - name: enable persistant journal
     shell: mkdir /var/log/journal
     args:
       creates: /var/log/journal
 
   - name: ensure system up to date
-    yum: name=* state=latest
+    dnf: name=* state=latest
 
   - name: HAProxy installed
-    yum: name=haproxy state=latest
+    dnf: name=haproxy state=latest
 
   - name: netcat installed
-    yum: name=nc state=latest
+    dnf: name=nc state=latest
 
   # Yes, SELinux prevents HAProxy from working. In this case I think it's
   # because we ask it to listen on port 29418 for Gerrit's SSH connections.
   - name: install libselinux-python, so Ansible can control selinux
-    yum: name=libselinux-python state=latest
+    dnf: name=libselinux-python state=latest
 
   - name: disable SELinux on subsequent boots
     selinux: state=disabled

@@ -101,7 +101,7 @@ as-is.
 
 The `$fedora_image_id` should reference a Fedora Cloud image. You can import
 these from <http://www.fedoraproject.org/>. At time of writing, these
-instructions were tested with Fedora Cloud 21 for x86_64.
+instructions were tested with Fedora Cloud 23 for x86_64.
 
 Backups
 -------
@@ -185,13 +185,14 @@ To deploy this system:
 
     nova boot frontend-haproxy \
         --key-name=$keyname \
-        --flavor=dc1.1x1.1 \
+        --flavor=dc1.1x0 \
         --image=$fedora_image_id \
         --nic="net-id=$network_id" \
         --security-groups default,gerrit,web-server \
         --user-data ./baserock-ops-team.cloud-config
     ansible-playbook -i hosts baserock_frontend/image-config.yml
     ansible-playbook -i hosts baserock_frontend/instance-config.yml
+    ansible-playbook -i hosts baserock_frontend/instance-backup-config.yml
 
     ansible -i hosts -m service -a 'name=haproxy enabled=true state=started' \
         --sudo frontend-haproxy
