@@ -229,13 +229,30 @@ you want to check the database configuration matches what you expect.
 
 ### Mail relay
 
-The mail relay is currently a Fedora Cloud 21 image running Exim. You should be
-able to take a Fedora Cloud 21 base image, instantiate it in the
-'internal-mail-relay' security group, and then run
-'baserock_mail/instance-config.yml' to configure it and start the service.
+The mail relay is currently a Fedora Cloud 23 image running Exim.
 
 It is configured to only listen on its internal IP. It's not intended to
 receive mail, or relay mail sent by systems outside the baserock.org cloud.
+
+To deploy it:
+
+    nova boot mail \
+        --key-name $keyname \
+        --flavor dc1.1x0 \
+        --image $fedora_image_id \
+        --nic "net-id=$network_id,v4-fixed-ip=192.168.222.145" \
+        --security-groups default,internal-mail-relay \
+        --user-data ./baserock-ops-team.cloud-config
+
+    ansible-playbook -i hosts baserock_mail/image-config.yml
+    ansible-playbook -i hosts baserock_mail/instance-config.yml
+
+The mail relay machine is stateless.
+
+The internal IP address of this machine is hardcoded in some places (beyond the
+usual haproxy.cfg file), use 'git grep' to find all of them. You'll need to
+update all the relevant config files. We really need some internal DNS system
+to avoid this hassle.
 
 ### OpenID provider
 

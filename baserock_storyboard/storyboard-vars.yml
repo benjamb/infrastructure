@@ -33,7 +33,7 @@ mysql_packages:
 
 storyboard_enable_email: 'True'
 storyboard_email_sender: StoryBoard (Do Not Reply) <do_not_reply@baserock.org>
-storyboard_email_smtp_host: 192.168.222.111
+storyboard_email_smtp_host: 192.168.222.145
 storyboard_email_smtp_timeout: 10
 
 storyboard_fqdn: storyboard.baserock.org

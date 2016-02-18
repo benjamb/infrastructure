@@ -1,17 +1,14 @@
 # Configuration for Baserock mail relay
 #
-# This Ansible playbook expects to be run on a Fedora 21 Cloud image.
+# This Ansible playbook expects to be run after the image-config.yml playbook.
 ---
 - hosts: mail
   gather_facts: false
   sudo: yes
   vars:
-    LOCAL_IP: 192.168.222.111
+    LOCAL_IP: 192.168.222.145
     PUBLIC_IP: 185.43.218.171
   tasks:
-  - name: exim4 installation
-    yum: name=exim state=installed
-
   # Fedora provides a default /etc/exim/exim.conf. Rather than copy it and
   # overwrite it, since we only need to make a few changes, I've used the
   # lineinfile module to do search-and-replace. It's a bit ugly though. It
@@ -67,7 +64,7 @@
   # For now, we just have the IP.
   - name: set primary hostname to public IP
     lineinfile:
-      regexp: '^#?primary_hostname = .*$'
+      regexp: '^#?\s+primary_hostname =.*$'
       line: 'primary_hostname = {{ PUBLIC_IP }}'
       dest: /etc/exim/exim.conf
 

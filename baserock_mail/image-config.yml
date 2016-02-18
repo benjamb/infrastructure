@@ -1,0 +1,22 @@
+# System configuration for Baserock mail relay.
+#
+# This Ansible playbook expects to be run on a Fedora 23 Cloud image.
+---
+- hosts: mail
+  gather_facts: false
+  sudo: yes
+  tasks:
+  # See: https://fedoramagazine.org/getting-ansible-working-fedora-23/
+  - name: install Python2 and required deps for Ansible modules
+    raw: dnf install -y python2 python2-dnf libselinux-python
+
+  - name: enable persistant journal
+    shell: mkdir /var/log/journal
+    args:
+      creates: /var/log/journal
+
+  - name: ensure system up to date
+    dnf: name=* state=latest
+
+  - name: exim4 installation
+    dnf: name=exim state=installed
