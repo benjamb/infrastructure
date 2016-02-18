@@ -185,7 +185,7 @@ To deploy this system to production:
         --key-name=$keyname \
         --flavor dc1.1x1 \
         --image=$fedora_image_id \
-        --nic="net-id=$network_id,v4-fixed-ip=192.168.222.30" \
+        --nic="net-id=$network_id,v4-fixed-ip=192.168.222.146" \
         --security-groups default,database-mysql \
         --user-data ./baserock-ops-team.cloud-config
     nova volume-create \
@@ -197,6 +197,7 @@ To deploy this system to production:
 
     ansible-playbook -i hosts baserock_database/image-config.yml
     ansible-playbook -i hosts baserock_database/instance-config.yml
+    ansible-playbook -i hosts baserock_database/instance-backup-config.yml
 
 At this point, if you are restoring from a backup, rsync the data across
 from your backup server on the instance, then start the mariadb service and you
@@ -224,6 +225,11 @@ you want to check the database configuration matches what you expect.
 
     ansible -i hosts -m service -a 'name=mariadb enabled=true state=started'
     ansible-playbook -i hosts baserock_database/instance-mariadb-config.yml
+
+The internal IP address of this machine is hardcoded in some places (beyond the
+usual haproxy.cfg file), use 'git grep' to find all of them. You'll need to
+update all the relevant config files. We really need some internal DNS system
+to avoid this hassle.
 
 [MariaDB]: https://www.mariadb.org
 

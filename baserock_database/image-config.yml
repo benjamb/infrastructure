@@ -1,28 +1,43 @@
 # System configuration for Baserock database server.
 #
-# This Ansible playbook expects to be run on a Fedora 21 Cloud image.
+# This Ansible playbook expects to be run on a Fedora 23 Cloud image.
 ---
 - hosts: database-mariadb
   gather_facts: False
   sudo: True
   tasks:
+  # See: https://fedoramagazine.org/getting-ansible-working-fedora-23/
+  - name: install Python2 and required deps for Ansible modules
+    raw: dnf install -y python2 python2-dnf libselinux-python
+
+  - name: ensure system up to date
+    dnf: name=* state=latest
+
   - name: enable persistant journal
     shell: mkdir /var/log/journal
     args:
       creates: /var/log/journal
 
   - name: install lvm2 tools
-    yum: name=lvm2 state=latest
+    dnf: name=lvm2 state=latest
 
   - name: install MariaDB
-    yum: name={{ item }} state=latest
+    dnf: name={{ item }} state=latest
     with_items:
         - mariadb
         - mariadb-server
         - MySQL-python
 
-  - name: install libselinux-python, so Ansible can control selinux
-    yum: name=libselinux-python state=latest
+  # By default this is set to /var/lib/mysql, but this causes a hidden
+  # directory to be created in /var/lib/mysql (.local/share/systemd) which
+  # breaks MariaDB because it expects each directory in there to represent a
+  # database, and you see this when upgrading:
+  #
+  #   Phase 2/6: Fixing views
+  #   mysqlcheck: Got error: 1102: Incorrect database name '#mysql50#.local' when selecting the database
+  #
+  - name: fix home directory of MySQL user
+    user: name=mysql home=/
 
   - name: disable SELinux on subsequent boots
     selinux: state=disabled

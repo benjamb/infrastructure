@@ -13,7 +13,7 @@
 # Database
 /usr/bin/rsync --archive --delete-before --delete-excluded \
     --hard-links --human-readable --progress --sparse \
-    root@192.168.222.30: /srv/backup/database \
+    root@192.168.222.146: /srv/backup/database \
   && date > /srv/backup/database.timestamp
 
 # Gerrit
@@ -23,14 +23,5 @@
     root@192.168.222.69: /srv/backup/gerrit \
   && date > /srv/backup/gerrit.timestamp
 
-# Storyboard Database
-/usr/bin/rsync --archive --delete-before --delete-excluded \
-    --hard-links --human-readable --progress --sparse \
-    root@192.168.222.30: /srv/backup/storyboard-database \
-  && date > /srv/backup/storyboard-database.timestamp
-
-# Storyboard Database
-/usr/bin/rsync --archive --delete-before --delete-excluded \
-    --hard-links --human-readable --progress --sparse \
-    root@192.168.222.30: /srv/backup/storyboard-database
-date > /srv/backup/storyboard-database.timestamp
+# FIXME: Storyboard database is not currently backed up, see:
+# <https://storyboard.baserock.org/#!/story/74>.
