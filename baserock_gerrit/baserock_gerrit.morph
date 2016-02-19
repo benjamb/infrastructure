@@ -15,10 +15,10 @@ systems:
       type: extensions/openstack
       location: https://compute.datacentred.io:5000/v2.0
 
-        # You can use this method to deploy upgrades over SSH, after the
-        # machine is deployed.
-        #type: ssh-rsync
-        #location: root@gerrit.baserock.org
+      # You can use this method to deploy upgrades over SSH, after the
+      # machine is deployed.
+      upgrade-type: extensions/ssh-rsync
+      upgrade-location: root@192.168.222.69
 
       OPENSTACK_IMAGENAME: baserock_gerrit
       CLOUD_INIT: true

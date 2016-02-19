@@ -4,8 +4,12 @@ systems:
 - morph: baserock_irclogs/systems/irclogs-x86_64.morph
   deploy:
     irclogs:
-      type: openstack
+      type: extensions/openstack
       location: http://compute.datacentred.io:5000/v2.0/
+
+      upgrade-type: extensions/ssh-rsync
+      upgrade-location: root@192.168.222.74
+
       DISK_SIZE: 4G
       HOSTNAME: irclogs
       CLOUD_INIT: true
