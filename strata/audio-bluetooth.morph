@@ -24,9 +24,9 @@ chunks:
   - alsa-lib
 - name: libical
   morph: strata/audio-bluetooth/libical.morph
-  repo: upstream:libical
-  ref: 52568782ae136e1ec4ddf3eb6da7b0f3fbd3f1b3
-  unpetrify-ref: baserock/morph
+  repo: upstream:libical-git
+  ref: da69aae790f680b633100475cac14c776fbda722
+  unpetrify-ref: v1.0.1
 - name: bluez
   morph: strata/audio-bluetooth/bluez.morph
   repo: upstream:bluez
@@ -68,19 +68,6 @@ chunks:
   build-depends:
   - bluez
   - speex
-- name: mobile-broadband-provider-info
-  repo: upstream:mobile-broadband-provider-info
-  ref: 4ed19e11c2975105b71b956440acdb25d46a347d
-  unpetrify-ref: baserock/morph
-  build-system: autotools
-- name: ofono
-  morph: strata/audio-bluetooth/ofono.morph
-  repo: upstream:ofono
-  ref: d05b718cc0b0d367227fbfbf52e60fc5462cc549
-  unpetrify-ref: '1.15'
-  build-depends:
-  - mobile-broadband-provider-info
-  - bluez
 - name: json-c
   morph: strata/audio-bluetooth/json-c.morph
   repo: upstream:json-c
@@ -91,15 +78,42 @@ chunks:
   repo: upstream:libsndfile
   ref: 6c05c615c95ffef7a8a5a707cde0bb52bdd74244
   unpetrify-ref: baserock/morph
+- name: libdaemon
+  repo: upstream:libdaemon
+  ref: 9fcc28e0e8f84968d1fb8b6d544a42efb13803ec
+  unpetrify-ref: v0.14
+  build-system: autotools
+- name: avahi
+  morph: strata/audio-bluetooth/avahi.morph
+  repo: upstream:avahi
+  ref: 031d6323b5abb785fbe3601b2f163316a1eb54bc
+  unpetrify-ref: v0.6.31
+  build-depends:
+  - libdaemon
+- name: sbc
+  repo: upstream:sbc
+  ref: f64b34a770bc7fbf180d2a733fe63d352f281ea2
+  unpetrify-ref: 1.3
+  build-system: autotools
+  build-depends:
+  - libsndfile
+- name: webrtc-audio-processing
+  repo: upstream:webrtc-audio-processing
+  ref: 9413986e79cf01958ee6dfb95a89de0d71a44221
+  unpetrify-ref: v0.1
+  build-system: autotools
 - name: pulseaudio
   morph: strata/audio-bluetooth/pulseaudio.morph
   repo: upstream:pulseaudio
-  ref: 53ad8aa7caa33caac52e35f71253e29d5a15f6e7
-  unpetrify-ref: v6.0
+  ref: a8f8accd5398868548a973b386ee3108f3441641
+  unpetrify-ref: v7.1
   build-depends:
+  - avahi
   - libsndfile
   - libatomic_ops
   - speex
   - json-c
   - alsa-lib
   - bluez
+  - sbc
+  - webrtc-audio-processing

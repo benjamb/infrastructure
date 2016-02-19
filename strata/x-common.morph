@@ -55,8 +55,8 @@ chunks:
   build-system: autotools
 - name: xorg-proto-randrproto
   repo: upstream:xorg-proto-randrproto
-  ref: ca7cc541c2e43e6c784df19b4583ac35829d2f72
-  unpetrify-ref: baserock/morph
+  ref: 79b63f0e57cd5baf06ff24252d3f1675dcb64467
+  unpetrify-ref: randrproto-1.5.0
   build-system: autotools
 - name: xorg-proto-recordproto
   repo: upstream:xorg-proto-recordproto
@@ -110,8 +110,8 @@ chunks:
   build-system: autotools
 - name: xorg-proto-x11proto
   repo: upstream:xorg-proto-x11proto
-  ref: 03cbbf6c3e811c026c86e3a60d2f9af56606e155
-  unpetrify-ref: xproto-7.0.26
+  ref: d5524e2b8d811aa03ed19c6e8fb2ee4162ca2b23
+  unpetrify-ref: xproto-7.0.28
   build-system: autotools
 - name: xorg-proto-dri2proto
   repo: upstream:xorg-proto-dri2proto
@@ -324,3 +324,31 @@ chunks:
   - xorg-proto-kbproto
   - xorg-lib-libX11
   - xorg-lib-libSM
+- name: xorg-lib-libXmu
+  repo: upstream:xorg-lib-libXmu
+  ref: 2539e539eafdac88177c8ee30b043c5d52f017e4
+  unpetrify-ref: libXmu-1.1.2
+  build-system: autotools
+  build-depends:
+  - xorg-lib-libX11
+  - xorg-lib-libXext
+  - xorg-lib-libXt
+  - xorg-proto-xextproto
+- name: xorg-lib-libXv
+  repo: upstream:xorg-lib-libXv
+  ref: 736d7ac5a94c7aa6761d50ab58339a3d9a116c51
+  unpetrify-ref: libXv-1.0.10
+  build-system: autotools
+  build-depends:
+  - xorg-lib-libX11
+  - xorg-lib-libXext
+  - xorg-proto-xextproto
+  - xorg-proto-videoproto
+- name: xorg-lib-libxkbfile
+  repo: upstream:xorg-lib-libxkbfile
+  ref: 7381c2f9013ef7784c78091fa671e652a62ca706
+  unpetrify-ref: baserock/morph
+  build-system: autotools
+  build-depends:
+  - xorg-lib-libX11
+  - xorg-proto-kbproto

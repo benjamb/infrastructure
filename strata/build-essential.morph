@@ -80,8 +80,8 @@ chunks:
 - name: stage2-glibc
   morph: strata/build-essential/stage2-glibc.morph
   repo: upstream:glibc
-  ref: 4e42b5b8f89f0e288e68be7ad70f9525aebc2cff
-  unpetrify-ref: glibc-2.21
+  ref: b995d95a5943785be3ab862b2d3276f3b4a22481
+  unpetrify-ref: release/2.22/master
   build-depends:
   - stage1-binutils
   - stage1-gcc
@@ -246,8 +246,8 @@ chunks:
 - name: glibc
   morph: strata/build-essential/glibc.morph
   repo: upstream:glibc
-  ref: 4e42b5b8f89f0e288e68be7ad70f9525aebc2cff
-  unpetrify-ref: glibc-2.21
+  ref: b995d95a5943785be3ab862b2d3276f3b4a22481
+  unpetrify-ref: release/2.22/master
   build-depends:
   - stage2-binutils
   - stage2-busybox
@@ -266,13 +266,10 @@ chunks:
     glibc-nss: build-essential-runtime
 
 - name: zlib
+  morph: strata/build-essential/zlib.morph
   repo: upstream:zlib
   ref: 50893291621658f355bc5b4d450a8d06a563053d
   unpetrify-ref: v1.2.8
-  build-system: autotools
-  artifacts:
-    zlib-libs: build-essential-minimal
-
   build-depends:
   - stage2-binutils
   - stage2-busybox
@@ -284,6 +281,9 @@ chunks:
   - stage2-make
   - stage2-reset-specs
   - glibc
+  artifacts:
+    zlib-libs: build-essential-minimal
+
 - name: binutils
   morph: strata/build-essential/binutils.morph
   repo: upstream:binutils-tarball

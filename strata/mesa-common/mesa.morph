@@ -11,12 +11,11 @@ configure-commands:
     ;;
   *)
     DRIDRIVERS=yes
-    GALLIUMDRIVERS=yes
+    GALLIUMDRIVERS=r300,r600,svga,swrast,virgl
     ;;
   esac
   ./autogen.sh --prefix="$PREFIX" --sysconfdir=/etc \
       --enable-gles2 \
       --with-egl-platforms=drm,wayland,x11 \
       --with-gallium-drivers="$GALLIUMDRIVERS" \
-      --with-dri-drivers="$DRIDRIVERS" \
-      --disable-llvm-shared-libs
+      --with-dri-drivers="$DRIDRIVERS"

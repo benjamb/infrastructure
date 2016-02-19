@@ -4,7 +4,9 @@ description: GNOME stratum
 build-depends:
 - morph: strata/icu-common.morph
 - morph: strata/input-common.morph
-- morph: strata/tools.morph
+- morph: strata/data-indexing-management.morph
+- morph: strata/vala-common.morph
+- morph: strata/geolocation.morph
 - morph: strata/gtk2.morph
 - morph: strata/gtk3.morph
 - morph: strata/audio-bluetooth.morph
@@ -12,13 +14,16 @@ build-depends:
 - morph: strata/NetworkManager-common.morph
 - morph: strata/multimedia-gstreamer.morph
 - morph: strata/network-security.morph
+- morph: strata/privileges-management.morph
 - morph: strata/python3-gobject.morph
 - morph: strata/python2-core.morph
 - morph: strata/wayland-generic.morph
-- morph: strata/x-generic.morph
 - morph: strata/ruby.morph
 - morph: strata/samba.morph
+- morph: strata/secret-service.morph
+- morph: strata/spell-checking.morph
 - morph: strata/cups.morph
+- morph: strata/WebKitGtk1-common.morph
 chunks:
 - name: dconf
   morph: strata/gnome/dconf.morph
@@ -30,11 +35,6 @@ chunks:
   repo: upstream:gnome/cogl
   ref: 85e0b084592e6beef2987b02e34a3909f35708e0
   unpetrify-ref: cogl-1.22
-- name: json-glib
-  repo: upstream:json-glib
-  ref: bfbc0b48e9256473491755766c079f73bee80724
-  unpetrify-ref: master
-  build-system: autotools
 - name: clutter
   morph: strata/gnome/clutter.morph
   repo: upstream:gnome/clutter
@@ -42,7 +42,6 @@ chunks:
   unpetrify-ref: master
   build-depends:
   - cogl
-  - json-glib
 - name: clutter-gtk
   repo: upstream:gnome/clutter-gtk
   ref: 56b09d02f71aa38f9496226641850e6ecf14ef70
@@ -50,6 +49,14 @@ chunks:
   build-system: autotools
   build-depends:
   - clutter
+- name: libchamplain
+  morph: strata/gnome/libchamplain.morph
+  repo: upstream:gnome/libchamplain
+  ref: c873d9d8116b8e14c1bfa939439d763926a77446
+  unpetrify-ref: LIBCHAMPLAIN_0_12_12
+  build-depends:
+  - clutter
+  - clutter-gtk
 - name: gsettings-desktop-schemas
   repo: upstream:gnome/gsettings-desktop-schemas
   ref: db40812cd79f64c98432efd1b632c5633a27f77e
@@ -82,13 +89,13 @@ chunks:
   build-system: autotools
 - name: gnome-desktop
   repo: upstream:gnome/gnome-desktop
-  ref: 1dbe40fac0e9924552ce2692ec141e86ce3d5633
-  unpetrify-ref: master
-  build-system: autotools
+  ref: 09d331adeb23aea7ec058dfb39c5224ebe8ae8f6
+  unpetrify-ref: 3.18.2
   build-depends:
   - gsettings-desktop-schemas
   - iso-codes
   - yelp-tools
+  build-system: autotools
 - name: libnotify
   repo: upstream:gnome/libnotify
   ref: 2f2c5649ef210b1dffeb46cddf062d20e1518ccf
@@ -118,12 +125,12 @@ chunks:
   morph: strata/gnome/libhangul.morph
   repo: upstream:libhangul
   ref: 78e9d8926262db423b4cf9181e1c2cb06a120a9b
-  unpetrify-ref: libhangul-0.1.0-19-g78e9d89
+  unpetrify-ref: baserock/libhangul-0.1.0-19-g78e9d89
 - name: ibus-hangul
   morph: strata/gnome/ibus-hangul.morph
   repo: upstream:ibus-hangul
   ref: 44f41ae5178372a7ff0540a4ce7a4944335525df
-  unpetrify-ref: 1.5.0-13-g44f41ae
+  unpetrify-ref: baserock/1.5.0-13-g44f41ae
   build-depends:
   - ibus
   - libhangul
@@ -143,7 +150,7 @@ chunks:
   morph: strata/gnome/ibus-libpinyin.morph
   repo: upstream:ibus-libpinyin
   ref: 4bb5fc19c0829053acd29619de59a85a73e03676
-  unpetrify-ref: 1.7.2-7-g4bb5fc1
+  unpetrify-ref: baserock/1.7.2-7-g4bb5fc1
   build-depends:
   - ibus
   - libpinyin
@@ -156,7 +163,7 @@ chunks:
   morph: strata/gnome/ibus-anthy.morph
   repo: upstream:ibus-anthy
   ref: 9ba0a2a1e595fbf6e39c50a15814bb6f9e337769
-  unpetrify-ref: 1.5.7-6-g9ba0a2a
+  unpetrify-ref: baserock/1.5.7-6-g9ba0a2a
   build-depends:
   - ibus
   - anthy
@@ -175,31 +182,6 @@ chunks:
   ref: 0c5eb813279c67607e17dfd99087358d34c6c8f5
   unpetrify-ref: master
   build-system: autotools
-- name: mozjs17
-  morph: strata/gnome/mozjs17.morph
-  repo: upstream:mozilla/mozjs17
-  ref: c8e33aaaba2787d3c94eba00257051400d106e76
-  unpetrify-ref: baserock/gnome
-- name: polkit
-  morph: strata/gnome/polkit.morph
-  repo: upstream:polkit
-  ref: 5a7e3b76aa45eea43e4bdc403ddd4c6e1a4c6542
-  unpetrify-ref: master
-  build-depends:
-  - mozjs17
-- name: libatasmart
-  morph: strata/gnome/libatasmart.morph
-  repo: upstream:libatasmart
-  ref: de6258940960443038b4c1651dfda3620075e870
-  unpetrify-ref: master
-- name: udisks
-  morph: strata/gnome/udisks.morph
-  repo: upstream:udisks
-  ref: 410cab8f3d749ad2660cda3ba38b6aece42bf10f
-  unpetrify-ref: master
-  build-depends:
-  - polkit
-  - libatasmart
 - name: colord
   morph: strata/gnome/colord.morph
   repo: upstream:colord
@@ -208,7 +190,6 @@ chunks:
   build-depends:
   - gusb
   - lcms2
-  - polkit
 - name: colord-gtk
   repo: upstream:colord-gtk
   ref: eadca143872288e1300303a771efdaab196900e1
@@ -216,47 +197,11 @@ chunks:
   build-system: autotools
   build-depends:
   - colord
-- name: geocode-glib
-  repo: upstream:gnome/geocode-glib
-  ref: a3e183e40053b4bd0fd0b25a070f60597270397a
-  unpetrify-ref: master
-  build-system: autotools
-  build-depends:
-  - json-glib
-- name: libmbim
-  repo: upstream:libmbim
-  ref: 6cf74ebfae1dccf807bb34d88f2cd024d4b14da7
-  unpetrify-ref: master
-  build-system: autotools
-- name: libqmi
-  repo: upstream:libqmi
-  ref: 97aaa6855d071f64ec2e28df1b9f816da02a3e07
-  unpetrify-ref: master
-  build-system: autotools
-- name: ModemManager
-  morph: strata/gnome/ModemManager.morph
-  repo: upstream:ModemManager
-  ref: 0ca68657fbcd5bace3d303a0babe2da292784385
-  unpetrify-ref: master
-  build-depends:
-  - libmbim
-  - libqmi
-  - polkit
-- name: geoclue
-  morph: strata/gnome/geoclue.morph
-  repo: upstream:geoclue
-  ref: ae8f7ab2f1e90f61931c652f2f65996c30c79e87
-  unpetrify-ref: 2.4.0
-  build-depends:
-  - json-glib
-  - ModemManager
 - name: libgweather
   repo: upstream:gnome/libgweather
   ref: 5b8aed611f24d03434eed35e438cea213b894b7c
   unpetrify-ref: master
   build-system: autotools
-  build-depends:
-  - geocode-glib
 - name: gnome-settings-daemon
   morph: strata/gnome/gnome-settings-daemon.morph
   repo: upstream:gnome-settings-daemon
@@ -264,8 +209,6 @@ chunks:
   unpetrify-ref: baserock/3.18.0/disable_wacom
   build-depends:
   - colord
-  - geoclue
-  - geocode-glib
   - gnome-desktop
   - gsettings-desktop-schemas
   - ibus
@@ -317,6 +260,7 @@ chunks:
   ref: 07237ff25d6171e1b548118442ddba4259a53ba5
   unpetrify-ref: master
   build-system: autotools
+<<<<<<< HEAD
 - name: libtasn1
   repo: upstream:libtasn1
   ref: 7f3a9c2294cdebd9e63fe007150c181b980865ef
@@ -336,6 +280,8 @@ chunks:
   build-system: autotools
   build-depends:
   - p11-kit
+=======
+>>>>>>> ee7c42ae4eca2995a58b3c9d0a298dae6f9684b6
 - name: libxkbcommon-x11
   repo: upstream:xorg-lib-libxkbcommon
   ref: c43c3c866eb9d52cd8f61e75cbef1c30d07f3a28
@@ -345,7 +291,7 @@ chunks:
   morph: strata/gnome/mutter.morph
   repo: upstream:mutter
   ref: b975676c5ddd9401d4acfc4d0b9317dd8956656b
-  unpetrify-ref: 3.18.0-25-gb975676
+  unpetrify-ref: baserock/3.18.0-25-gb975676
   build-depends:
   - clutter
   - cogl
@@ -363,6 +309,7 @@ chunks:
   build-system: autotools
   build-depends:
   - iso-codes
+<<<<<<< HEAD
 - name: m4-common
   repo: upstream:m4-common
   ref: 4b704704f5e826b73b79ccfddaf215a510c104c4
@@ -375,6 +322,9 @@ chunks:
   build-system: autotools
   build-depends:
   - m4-common
+=======
+  build-system: autotools
+>>>>>>> ee7c42ae4eca2995a58b3c9d0a298dae6f9684b6
 - name: caribou
   morph: strata/gnome/caribou.morph
   repo: upstream:caribou
@@ -382,39 +332,19 @@ chunks:
   unpetrify-ref: baserock/CARIBOU_0_4_19-1-ge1a7a24+python3
   build-depends:
   - clutter
-  - libgee
   - libxklavier
-- name: libsecret
-  morph: strata/gnome/libsecret.morph
-  repo: upstream:gnome/libsecret
-  ref: 4d76cf7dd8e55d93bb58164a1fff38113ba97af5
-  unpetrify-ref: master
 - name: librest
   morph: strata/gnome/librest.morph
   repo: upstream:gnome/librest
   ref: 08f1fc35e3c77aecedacf08aa510e82c91ac7f2a
   unpetrify-ref: 0.7.93
-- name: enchant
-  repo: upstream:enchant
-  ref: 6d8b6bb15f09a14c90fb900eb2ecf1172d7cf6cf
-  unpetrify-ref: master
-  build-system: autotools
-- name: hyphen
-  repo: upstream:hyphen
-  ref: 7f28cf7edb54cc1bc4eaa09672e0bc043b1da70b
-  unpetrify-ref: master
-  build-system: autotools
 - name: WebKitGtk
   morph: strata/gnome/WebKitGtk.morph
   repo: upstream:WebKitGtk-tarball
   ref: e15dd966d523731101f70ccf768bba12435a0208
   unpetrify-ref: webkitgtk-2.10.2
   build-depends:
-  - enchant
-  - geoclue
-  - hyphen
   - libnotify
-  - libsecret
 - name: gnome-online-accounts
   morph: strata/gnome/gnome-online-accounts.morph
   repo: upstream:gnome/gnome-online-accounts
@@ -433,12 +363,10 @@ chunks:
   morph: strata/gnome/libgdata.morph
   repo: upstream:libgdata
   ref: ed52192fcd3cde2c0d7f0ab0d9e300fcdbc373a8
-  unpetrify-ref: LIBGDATA_0_17_3-16-ged52192
+  unpetrify-ref: baserock/LIBGDATA_0_17_3-16-ged52192
   build-depends:
-  - gcr
   - gnome-online-accounts
   - liboauth
-  - m4-common
 - name: krb5
   morph: strata/gnome/krb5.morph
   repo: upstream:krb5
@@ -447,23 +375,63 @@ chunks:
 - name: evolution-data-server
   morph: strata/gnome/evolution-data-server.morph
   repo: upstream:evolution-data-server
-  ref: 8d094ef96a89957d353beaa66f0cbaa04cfbfedd
-  unpetrify-ref: EVOLUTION_DATA_SERVER_3_18_1-11-g8d094ef
+  ref: 658d6e37796984bf05e275413726ad3b71083ccf
+  unpetrify-ref: EVOLUTION_DATA_SERVER_3_18_3
   build-depends:
-  - gcr
   - gnome-online-accounts
   - krb5
   - libgdata
   - libgweather
-  - libsecret
+- name: raptor
+  morph: strata/gnome/raptor.morph
+  repo: upstream:raptor
+  ref: 286452cd786098ce31a002f16e5ec2e0fbdc9041
+  unpetrify-ref: raptor2_2_0_15
+- name: isodate
+  repo: upstream:python-packages/isodate
+  ref: b99c0bd318991a8a8a9dc0c5273800b9801428f6
+  unpetrify-ref: 0.5.4
+  build-system: python-distutils
+- name: rdflib
+  repo: upstream:python-packages/rdflib
+  ref: c2f9725f385a85fd280b4cf30239748b24f5cc06
+  unpetrify-ref: 4.2.1
+  build-system: python-distutils
+  build-depends:
+  - isodate
+- name: zeitgeist
+  morph: strata/gnome/zeitgeist.morph
+  repo: upstream:zeitgeist
+  ref: abc7939806346a563ded2b16456dc7e2fff54fcc
+  unpetrify-ref: v0.9.16
+  build-depends:
+  - raptor
+  - rdflib
+  - telepathy-glib
+- name: folks
+  morph: strata/gnome/folks.morph
+  repo: upstream:gnome/folks
+  ref: 27367f26cd66bb86b745c892db214aa9a136c818
+  unpetrify-ref: 0.11.2
+  build-depends:
+  - evolution-data-server
+  - telepathy-logger
+  - zeitgeist
+- name: libgfbgraph
+  repo: upstream:gnome/libgfbgraph
+  ref: 50eabf601310052216e25fa112e688204738f222
+  unpetrify-ref: v_0_2_3
+  build-system: autotools
+  build-depends:
+  - gnome-online-accounts
+  - librest
 - name: network-manager-applet
   repo: upstream:gnome/network-manager-applet
   ref: bbcc673af29066cfc6f0e12f04c0dd3f9937fb3a
-  unpetrify-ref: 0.9.10-beta1-344-gbbcc673
+  unpetrify-ref: baserock/0.9.10-beta1-344-gbbcc673
   build-system: autotools
   build-depends:
   - iso-codes
-  - libsecret
   - libnotify
 - name: gnome-shell
   morph: strata/gnome/gnome-shell.morph
@@ -474,22 +442,19 @@ chunks:
   - caribou
   - clutter
   - evolution-data-server
-  - gcr
   - gjs
   - libcanberra
   - mutter
-  - polkit
   - startup-notification
   - telepathy-glib
   - network-manager-applet
 - name: gnome-session
   morph: strata/gnome/gnome-session.morph
   repo: upstream:gnome/gnome-session
-  ref: 9af8474a027edecf7c73827964fd88bc960266d6
-  unpetrify-ref: 3.18.0-3-g9af8474
+  ref: 4ab09c39738adaaf16116b3bd82e47188b5483cd
+  unpetrify-ref: 3.18.1.2
   build-depends:
   - gnome-desktop
-  - json-glib
 - name: d-feet
   morph: strata/gnome/d-feet.morph
   repo: upstream:gnome/d-feet
@@ -497,35 +462,17 @@ chunks:
   unpetrify-ref: master
   build-depends:
   - yelp-tools
-- name: gnome-keyring
-  morph: strata/gnome/gnome-keyring.morph
-  repo: upstream:gnome-keyring
-  ref: b1aee9c01f647f084e6c0ae2b4810c9ec7d0fd0d
-  unpetrify-ref: 3.18.0
-  build-depends:
-  - gcr
-- name: gvfs
-  morph: strata/gnome/gvfs.morph
-  repo: upstream:gvfs
-  ref: d037b5fd56cae878ed7bb5269a40e4bd046551d7
-  unpetrify-ref: master
-  build-depends:
-  - gcr
-  - udisks
 - name: accountsservice
   morph: strata/gnome/accountsservice.morph
   repo: upstream:accountsservice
   ref: 36b424b4aad91aaf91eeb6b6285cf550b15fcfeb
   unpetrify-ref: master
-  build-depends:
-  - polkit
 - name: gdm
   morph: strata/gnome/gdm.morph
   repo: upstream:gdm
   ref: 494ec8cee5727c37118994d3864c44f36aa454fc
   unpetrify-ref: 3.18.0
   build-depends:
-  - polkit
   - accountsservice
   - libcanberra
   - dconf
@@ -545,33 +492,17 @@ chunks:
   morph: strata/gnome/adwaita-icon-theme.morph
   repo: upstream:gnome/adwaita-icon-theme
   ref: 5e469ae6e664cb0808b6ce9fcfd7bd2ac6fc4216
-  unpetrify-ref: gnome-3.18
+  unpetrify-ref: gnome-3-18
 - name: gnome-backgrounds
   repo: upstream:gnome/gnome-backgrounds
   ref: e68462edd35ae3edb4311df90dc4d1a3cdcb175f
-  unpetrify-ref: 3.18.0-2-ge68462e
+  unpetrify-ref: baserock/3.18.0-2-ge68462e
   build-system: autotools
-- name: nettle
-  morph: strata/gnome/nettle.morph
-  repo: upstream:nettle
-  ref: 549e2853d6f3fa9cefb099970209c7f5bf5673b7
-  unpetrify-ref: nettle_3.1.1_release_20150424
-- name: gnutls
-  morph: strata/gnome/gnutls.morph
-  repo: upstream:gnutls
-  ref: 21fecbde80ae824f85a10a0c23a327c49e4e5fb6
-  unpetrify-ref: baserock/gnutls_3_4_6
-  build-depends:
-  - nettle
-  - libtasn1
-  - p11-kit
 - name: glib-networking
   morph: strata/gnome/glib-networking.morph
   repo: upstream:gnome/glib-networking
   ref: 32ee55186d7df497e3d402a1940cddfabd9dbc21
   unpetrify-ref: 2.46.0
-  build-depends:
-  - gnutls
 - name: cracklib
   morph: strata/gnome/cracklib.morph
   repo: upstream:cracklib
@@ -584,40 +515,20 @@ chunks:
   unpetrify-ref: libpwquality-1.3.0
   build-depends:
   - cracklib
-- name: gnome-initial-setup
-  morph: strata/gnome/gnome-initial-setup.morph
-  repo: upstream:gnome/gnome-initial-setup
-  ref: e0b7f968213d26807d00ca5841c03f4a5a4605b2
-  unpetrify-ref: 3.19.1-1-ge0b7f96
+- name: glade
+  morph: strata/gnome/glade.morph
+  repo: upstream:gnome/glade
+  ref: 4f81f15467ad45c3dddc7ee50ffaca9596d628ee
+  unpetrify-ref: master
   build-depends:
-  - accountsservice
-  - gdm
-  - gnome-desktop
-  - gnome-keyring
-  - gnome-online-accounts
-  - ibus
-  - iso-codes
-  - krb5
-  - libgweather
-  - libpwquality
-  - network-manager-applet
+  - yelp-tools
 - name: vte
   morph: strata/gnome/vte.morph
   repo: upstream:gnome/vte
   ref: aa7120c2e359bb5d6d0b0ec6c1e0eecf0583be03
   unpetrify-ref: 0.43.0
   build-depends:
-  - gnutls
-- name: tracker
-  repo: upstream:gnome/tracker
-  ref: ad31f26e3c45dbe3365ff4aaae39269d9210f4a9
-  unpetrify-ref: 1.6.0
-  build-system: autotools
-- name: libexif
-  repo: upstream:libexif-tarball
-  ref: 0c6a5fa0d9719a40748d8726b4543f02f70518c1
-  unpetrify-ref: libexif-0.6.21
-  build-system: autotools
+  - glade
 - name: nautilus
   morph: strata/gnome/nautilus.morph
   repo: upstream:nautilus
@@ -627,13 +538,11 @@ chunks:
   - vte
   - gnome-desktop
   - gsettings-desktop-schemas
-  - libexif
-  - tracker
 - name: desktop-file-utils
+  morph: strata/gnome/desktop-file-utils.morph
   repo: upstream:desktop-file-utils
   ref: 4944725bddcf5821d53d7d648fc53347ce12cc03
   unpetrify-ref: 0.22
-  build-system: autotools
 - name: gnome-terminal
   morph: strata/gnome/gnome-terminal.morph
   repo: upstream:gnome/gnome-terminal
@@ -646,45 +555,80 @@ chunks:
   - gsettings-desktop-schemas
   - nautilus
   - yelp-tools
-- name: gmime
-  morph: strata/gnome/gmime.morph
-  repo: upstream:gnome/gmime
-  ref: 496313fbe956b350c22fa705edbcfdde3d7c9e50
-  unpetrify-ref: GMIME_2_6_20-24-g496313f
-- name: totem-pl-parser
-  repo: upstream:gnome/totem-pl-parser
-  ref: 1be3144e9a6bf183a61c9596165d52bbe405b5cc
-  unpetrify-ref: V_3_10_5-16-g1be3144
+- name: libnice
+  repo: upstream:libnice
+  ref: 533ff6c5a03680f300709be4dc999f45659f3a1b
+  unpetrify-ref: 0.1.13
+  build-system: autotools
+- name: farstream
+  repo: upstream:farstream
+  ref: 9247c10816835dc76269baa7c4c8996ae1a2fac3
+  unpetrify-ref: baserock/0.2.7
   build-system: autotools
   build-depends:
-  - gmime
-- name: libmediaart
-  morph: strata/gnome/libmediaart.morph
-  repo: upstream:gnome/libmediaart
-  ref: 52eb6498c97ce0005186946bc9162d87597abc2c
-  unpetrify-ref: 1.9.0-8-g52eb649
+  - libnice
+- name: telepathy-farstream
+  repo: upstream:telepathy-farstream
+  ref: 0b1bba79cfe94e7676fe69e9e0d2e3983a3c14c5
+  unpetrify-ref: telepathy-farstream-0.6.2
+  build-system: autotools
+  build-depends:
+  - farstream
+  - telepathy-glib
+- name: telepathy-gabble
+  morph: strata/gnome/telepathy-gabble.morph
+  repo: upstream:telepathy-gabble
+  ref: 91d890ef3f269e92ea3a2a265597293e056e842c
+  unpetrify-ref: baserock/telepathy-gabble-0.18.3
+  build-depends:
+  - libnice
+  - telepathy-glib
+- name: telepathy-salut
+  morph: strata/gnome/telepathy-salut.morph
+  repo: upstream:telepathy-salut
+  ref: e554f3c595307f665e5c2dd464f1baf0120ab43d
+  unpetrify-ref: baserock/telepathy-salut-0.8.1
+  build-depends:
+  - telepathy-glib
+- name: telepathy-idle
+  repo: upstream:telepathy-idle
+  ref: 55e9841a4af51d7f014395475526b700abec4d0b
+  unpetrify-ref: telepathy-idle-0.2.0
+  build-system: autotools
+  build-depends:
+  - telepathy-glib
+- name: libpurple
+  morph: strata/gnome/libpurple.morph
+  repo: upstream:pidgin
+  ref: 9273b95bd66893a362cbf6f69bb8bc749db41f04
+  unpetrify-ref: baserock/v2.10.11
+  build-depends:
+  - evolution-data-server
+  - farstream
+- name: telepathy-haze
+  repo: upstream:telepathy-haze
+  ref: d3d7b7f9342511c0c961e3f2d9fc1f5fb0804142
+  unpetrify-ref: telepathy-haze-0.8.0
+  build-system: autotools
+  build-depends:
+  - libpurple
+  - telepathy-glib
 - name: grilo
   repo: upstream:gnome/grilo
   ref: e470c0cd72231d2a86f419a584df3d635bc6b62f
-  unpetrify-ref: grilo-0.2.14-17-ge470c0c
+  unpetrify-ref: baserock/grilo-0.2.14-17-ge470c0c
   build-system: autotools
-  build-depends:
-  - totem-pl-parser
 - name: grilo-plugins
   repo: upstream:gnome/grilo-plugins
   ref: e23b0fa5f6656d53b977693bf55174bd2ccd172d
-  unpetrify-ref: grilo-plugins-0.2.16-17-ge23b0fa
+  unpetrify-ref: baserock/grilo-plugins-0.2.16-17-ge23b0fa
   build-system: autotools
   build-depends:
   - gnome-online-accounts
   - grilo
   - libgdata
-  - libmediaart
   - liboauth
   - librest
-  - m4-common
-  - totem-pl-parser
-  - tracker
   - yelp-tools
 - name: libgtop
   repo: upstream:gnome/libgtop
@@ -712,7 +656,7 @@ chunks:
 - name: gcab
   repo: upstream:gnome/gcab
   ref: e57dd3d1ddb0da91df9188c2a98d59d1050ac6cb
-  unpetrify-ref: v0.6-22-ge57dd3d
+  unpetrify-ref: baserock/v0.6-22-ge57dd3d
   build-system: autotools
 - name: appstream-glib
   repo: upstream:appstream-glib
@@ -736,13 +680,19 @@ chunks:
   - gnome-desktop
   - lcms2
   - libcanberra
-  - libexif
   - vte
   - yelp-tools
 - name: clutter-gst
   repo: upstream:gnome/clutter-gst
   ref: 395797827a148809a2be0d968c5bf71a6e9c9299
   unpetrify-ref: 3.0.14
+  build-system: autotools
+  build-depends:
+  - clutter
+- name: clutter-gst2
+  repo: upstream:gnome/clutter-gst
+  ref: e9372b1c7d858ae0268d92d0c5e02532a8352b68
+  unpetrify-ref: 2.0.16
   build-system: autotools
   build-depends:
   - clutter
@@ -785,6 +735,23 @@ chunks:
   - libpwquality
   - libwacom
   - network-manager-applet
+- name: gnome-initial-setup
+  morph: strata/gnome/gnome-initial-setup.morph
+  repo: upstream:gnome/gnome-initial-setup
+  ref: a6ae059a7fab60cae534f78eb485960a7b406be5
+  unpetrify-ref: new-user-mode-fixes
+  build-depends:
+  - accountsservice
+  - cheese
+  - gdm
+  - gnome-desktop
+  - gnome-online-accounts
+  - ibus
+  - iso-codes
+  - krb5
+  - libgweather
+  - libpwquality
+  - network-manager-applet
 - name: libgnomekbd
   repo: upstream:gnome/libgnomekbd
   ref: d8ff867e95e548476c68db12ade3a0a4697a24a1
@@ -792,3 +759,215 @@ chunks:
   build-system: autotools
   build-depends:
   - libxklavier
+- name: sound-theme-freedesktop
+  build-system: autotools
+  repo: upstream:sound-theme-freedesktop
+  ref: 9d2ac65a2f88263f0eec8b777ef3bdc023b93c25
+  unpetrify-ref: 0.8
+- name: libwnck
+  morph: strata/gnome/libwnck.morph
+  repo: upstream:libwnck
+  ref: 46bade6f53351f2a63d030e27cbba2e0048d1cde
+  unpetrify-ref: 3.14.0
+- name: libpeas
+  morph: strata/gnome/libpeas.morph
+  repo: upstream:gnome/libpeas
+  ref: ede1902bee26dbe36c2c1559b1166035580cdf30
+  unpetrify-ref: libpeas-1.16.0
+- name: gtksourceview
+  morph: strata/gnome/gtksourceview.morph
+  repo: upstream:gnome/gtksourceview
+  ref: eeb6fd40fbbc74515828070fef554ed98ad481e9
+  unpetrify-ref: 3.18.1
+  build-depends:
+  - glade
+###############################################
+#         Applications Start Here             #
+###############################################
+- name: epiphany
+  morph: strata/gnome/epiphany.morph
+  repo: upstream:gnome/epiphany
+  ref: 5483823ae71fc5280e2fda9e85557362debb0c2e
+  unpetrify-ref: 3.18.1
+  build-depends:
+  - appstream-glib
+  - gnome-desktop
+  - iso-codes
+  - libcanberra
+  - libnotify
+  - libwnck
+  - startup-notification
+  - WebKitGtk
+- name: totem
+  repo: upstream:gnome/totem
+  ref: 77cf0b9d3de4fd3a48492c77e25308d6c411b651
+  unpetrify-ref: baserock/V_3_18_1
+  build-system: autotools
+  build-depends:
+  - appstream-glib
+  - clutter
+  - clutter-gst
+  - clutter-gtk
+  - gnome-desktop
+  - grilo
+  - grilo-plugins
+  - gsettings-desktop-schemas
+  - iso-codes
+  - libpeas
+  - yelp-tools
+- name: yelp
+  repo: upstream:gnome/yelp
+  morph: strata/gnome/yelp.morph 
+  ref: 9932283ce9610f969e023a0dc326c81159c06a15
+  unpetrify-ref: 3.18.1
+  build-depends:
+  - WebKitGtk
+  - yelp-xsl
+- name: gnome-user-docs
+  repo: upstream:gnome/gnome-user-docs
+  ref: 618fc9644317c55d674ca2e1b00b41d364427fb1
+  unpetrify-ref: master
+  build-system: autotools
+  build-depends:
+  - yelp-tools
+- name: gnome-getting-started-docs
+  repo: upstream:gnome/gnome-getting-started-docs
+  ref: e50ec428ee080513f059a5cab0a41174f99f0413
+  unpetrify-ref: 3.18.2
+  build-system: autotools
+  build-depends:
+  - yelp-tools
+- name: gedit
+  repo: upstream:gnome/gedit
+  ref: 4b318c265d71eca3572920bb159dcda9aa9f9184
+  unpetrify-ref: baserock/3.18.2
+  build-system: autotools
+  build-depends:
+  - gsettings-desktop-schemas
+  - gtksourceview
+  - iso-codes
+  - libpeas
+  - yelp-tools
+- name: gnome-calendar
+  repo: upstream:gnome/gnome-calendar
+  ref: 5292e9d57442067701ce94eea54b4b12d13b7aa3
+  unpetrify-ref: 3.18.1
+  build-system: autotools
+  build-depends:
+  - appstream-glib
+  - gnome-online-accounts
+  - evolution-data-server
+- name: gnome-todo
+  repo: upstream:gnome/gnome-todo
+  ref: a39ccadf8a659fca8b4503bf4844383f5346f6cb
+  unpetrify-ref: GNOME_TODO_3_18_1
+  build-system: autotools
+  build-depends:
+  - appstream-glib
+  - evolution-data-server
+  - gnome-online-accounts
+- name: empathy
+  morph: strata/gnome/empathy.morph
+  repo: upstream:gnome/empathy
+  ref: facd02a2cf3c0d2778b10626362b29e2a6df546a
+  unpetrify-ref: baserock/EMPATHY_3_12_11
+  build-depends:
+  - cheese
+  - clutter
+  - clutter-gst2
+  - clutter-gtk
+  - farstream
+  - folks
+  - gnome-online-accounts
+  - gsettings-desktop-schemas
+  - iso-codes
+  - libcanberra
+  - libchamplain
+  - libnotify
+  - telepathy-farstream
+  - telepathy-glib
+  - telepathy-logger
+  - telepathy-mission-control
+  - yelp-tools
+- name: gnome-contacts
+  repo: upstream:gnome/gnome-contacts
+  ref: 3715ec79662989038d5055bb74aa0b728b40edb5
+  unpetrify-ref: baserock/3.18.0
+  build-system: autotools
+  build-depends:
+  - cheese
+  - folks
+  - gnome-desktop
+  - gnome-online-accounts
+  - libchamplain
+  - libnotify
+  - telepathy-glib
+- name: gnome-maps
+  repo: upstream:gnome/gnome-maps
+  ref: 6d6e8afd54735e565a0c81cb761f22bb82d142db
+  unpetrify-ref: v3.18.1
+  build-system: autotools
+  build-depends:
+  - folks
+  - clutter-gtk
+  - gjs
+  - gnome-desktop
+  - gnome-online-accounts
+  - libchamplain
+  - libgfbgraph
+- name: gnome-dictionary
+  repo: upstream:gnome/gnome-dictionary
+  ref: e36fac6ee47a71c46afdd55f2110c36a22521bb6
+  unpetrify-ref: 3.18.0
+  build-system: autotools
+  build-depends:
+  - yelp-tools
+- name: eog
+  repo: upstream:gnome/eog
+  ref: d05bdd7dfbe13910f903c8678e923ff6d92cbc86
+  unpetrify-ref: 3.18.1
+  build-system: autotools
+  build-depends:
+  - gnome-desktop
+  - gsettings-desktop-schemas
+  - lcms2
+  - libpeas
+  - yelp-tools
+- name: baobab
+  repo: upstream:gnome/baobab
+  ref: 59fa8171d2dfa02be56930f451ae186680074bb6
+  unpetrify-ref: 3.18.1
+  build-system: autotools
+  build-depends:
+  - yelp-tools
+- name: gnome-font-viewer
+  repo: upstream:gnome/gnome-font-viewer
+  ref: 9af2f35a63f34f87407e784b514cafe1cc772384
+  unpetrify-ref: master
+  build-system: autotools
+  build-depends:
+  - gnome-desktop
+- name: gnome-screenshot
+  repo: upstream:gnome/gnome-screenshot
+  ref: 3a97ad23ff14a0400f12dd3fdf501d1d9dad04d4
+  unpetrify-ref: 3.18.0
+  build-system: autotools
+  build-depends:
+  - libcanberra
+- name: evolution
+  morph: strata/gnome/evolution.morph
+  repo: upstream:gnome/evolution
+  ref: 579583275620be75afdedcde909a82fd96136188
+  unpetrify-ref: EVOLUTION_3_18_3
+  build-depends:
+  - evolution-data-server
+  - clutter-gtk
+  - gnome-desktop
+  - gnome-online-accounts
+  - gsettings-desktop-schemas
+  - libcanberra
+  - libchamplain
+  - libgdata
+  - libgweather
+  - libnotify
+  - yelp-tools
