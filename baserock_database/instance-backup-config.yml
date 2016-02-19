@@ -4,8 +4,11 @@
   gather_facts: false
   sudo: yes
   vars:
-    FRONTEND_IP: 192.168.222.116
+    FRONTEND_IP: 192.168.222.143
   tasks:
+    - name: pyyaml for Python 2
+      dnf: PyYAML state=latest
+
     - name: backup-snapshot script
       copy: src=../backup-snapshot dest=/usr/bin/backup-snapshot mode=755
 
