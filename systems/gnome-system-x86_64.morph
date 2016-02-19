@@ -13,8 +13,14 @@ strata:
   morph: strata/NetworkManager-common.morph
 - name: core
   morph: strata/core.morph
+- name: data-indexing-management
+  morph: strata/data-indexing-management.morph
+- name: dlna-services
+  morph: strata/dlna-services.morph
 - name: foundation
   morph: strata/foundation.morph
+- name: geolocation
+  morph: strata/geolocation.morph
 - name: glib-common
   morph: strata/glib-common.morph
 - name: gnome
@@ -35,20 +41,24 @@ strata:
   morph: strata/mesa-common.morph
 - name: multimedia-common
   morph: strata/multimedia-common.morph
+- name: multimedia-hardware-codecs-x86
+  morph: strata/multimedia-hardware-codecs-x86.morph
 - name: multimedia-gstreamer
   morph: strata/multimedia-gstreamer.morph
+- name: privileges-management
+  morph: strata/privileges-management.morph
 - name: python2-core
   morph: strata/python2-core.morph
-- name: python-pygobject
-  morph: strata/python-pygobject.morph
+- name: python3-gobject
+  morph: strata/python3-gobject.morph
 - name: libsoup-common
   morph: strata/libsoup-common.morph
 - name: ruby
   morph: strata/ruby.morph
-- name: tools
-  morph: strata/tools.morph
 - name: libdrm-common
   morph: strata/libdrm-common.morph
+- name: vala-common
+  morph: strata/vala-common.morph
 - name: wayland-generic
   morph: strata/wayland-generic.morph
 - name: weston-common
@@ -69,8 +79,16 @@ strata:
   morph: strata/icu-common.morph
 - name: samba
   morph: strata/samba.morph
+- name: secret-service
+  morph: strata/secret-service.morph
+- name: spell-checking
+  morph: strata/spell-checking.morph
+- name: storage-management
+  morph: strata/storage-management.morph
 - name: cups
   morph: strata/cups.morph
+- name: WebKitGtk1-common
+  morph: strata/WebKitGtk1-common.morph
 configuration-extensions:
 - extensions/set-hostname
 - extensions/add-config-files

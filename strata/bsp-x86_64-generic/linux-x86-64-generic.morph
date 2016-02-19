@@ -264,6 +264,10 @@ configure-commands:
 - scripts/config -e SCSI_VIRTIO
 - scripts/config -e HYPERVISOR_GUEST
 - scripts/config -e PARAVIRT
+- scripts/config -e CONFIG_SND_INTEL8X0
+- scripts/config -m CONFIG_DRM_CIRRUS_QEMU
+- scripts/config -m CONFIG_DRM_BOCHS
+- scripts/config -m CONFIG_DRM_VIRTIO_GPU
 - yes '' | make oldconfig
 build-commands:
 - make $MAKEFLAGS
@@ -285,3 +289,11 @@ install-commands:
       find include/uapi -print0
       find scripts -print0
   ) | cpio -0pumd "$DESTDIR$PREFIX/src/linux"
+system-integration:
+  linux-x86-64-generic-misc:
+    # This is required for any modules to work correctly. However, it depends
+    # `depmod` from the 'kmod' chunk in the 'foundation' stratum, so it runs
+    # conditionally on `depmod` existing to avoid breaking in
+    # minimal-system-x86_64.
+    00-depmod:
+    - if which depmod; then (cd /lib/modules && for version in *; do depmod -a "$version"; done) fi
