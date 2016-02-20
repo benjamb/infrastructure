@@ -31,3 +31,6 @@
 
   - name: enable and start Cherokee service
     service: name=cherokee enabled=yes state=restarted
+
+  - name: enable and start ntpd service
+    service: name=ntpd enabled=yes state=restarted

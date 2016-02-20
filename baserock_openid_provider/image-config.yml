@@ -1,6 +1,4 @@
 # Image configuration for Baserock OpenID provider.
-#
-# This playbook is run at image-creation time by Packer.
 ---
 - hosts: openid
   gather_facts: False
@@ -29,6 +27,10 @@
 
   - name: install PyYAML
     dnf: name=PyYAML state=latest
+
+  # Authentication in Gerrit fails if OpenID clock is not set correctly
+  - name: Install ntp
+    dnf: name=ntp
 
   # All this stuff is installed with Pip, which isn't really necessary except
   # for django-registration-redux. Fedora packages django-registration but not
