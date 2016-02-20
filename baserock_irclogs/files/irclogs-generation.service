@@ -8,5 +8,8 @@ User=supybot
 ExecStart=/usr/bin/logs2html -t 'IRC logs for #baserock' -p 'IRC logs for #baserock for ' /home/supybot/logs/ChannelLogger/freenode/#baserock/
 ExecStart=/bin/sh -c "/usr/bin/rsync -a /home/supybot/logs/ChannelLogger/freenode/\#baserock/*html /home/supybot/logs/ChannelLogger/freenode/\#baserock/*css /srv/irclogs/"
 
+ExecStart=/usr/bin/logs2html -t 'IRC logs for #automotive' -p 'IRC logs for #automotive for ' /home/supybot/logs/ChannelLogger/freenode/#automotive/
+ExecStart=/bin/sh -c "/usr/bin/rsync -a /home/supybot/logs/ChannelLogger/freenode/\#automotive/*html /home/supybot/logs/ChannelLogger/freenode/\#automotive/*css /srv/irclogs/automotive"
+
 [Install]
 WantedBy=multi-user.target
