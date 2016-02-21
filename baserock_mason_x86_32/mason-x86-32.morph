@@ -6,12 +6,15 @@ systems:
 - morph: systems/build-system-x86_32.morph
   deploy:
     mason:
+      upgrade-type: extensions/ssh-rsync
+      upgrade-location: root@192.168.222.81
+
       type: openstack
       location: https://compute.datacentred.io:5000/v2.0
       CLOUD_INIT: true
       DISK_SIZE: 3G
       DISTBUILD_GENERIC: true
-      INSTALL_FILES: distbuild/manifest
+      INSTALL_FILES: install-files/distbuild/manifest
       KERNEL_ARGS: console=ttyS0 console=tty0
       MASON_GENERIC: true
       OPENSTACK_IMAGENAME: baserock_mason_x86_32
