@@ -34,6 +34,10 @@
   description: baserock.org infrastructure
   use-storyboard: true
 
+- project: baserock/spec
+  description: Specification for Baserock definitions format
+  use-storyboard: true
+
 - project: baserock/wiki
   description: Baserock Wiki at http://wiki.baserock.org/
   use-storyboard: true
