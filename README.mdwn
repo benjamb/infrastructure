@@ -761,3 +761,37 @@ or 'build' system.
     # Now you can finish the configuration of the Trove with:
 
     ansible-playbook -i hosts baserock_trove/configure-trove.yml
+
+
+Creating new repos
+------------------
+
+This is a quick guide on how to create a new repo to hold Baserock project
+stuff.
+
+The creation of the repo must have been proposed on baserock-dev and had
+two +1s.
+
+Ideally, don't create a new repo. We don't want development to be split across
+dozens of different repos, and we don't want Gerrit and the
+<git.baserock.org/baserock/baserock> to become full of clutter. If you're
+prototyping something, use a different Git server
+([Github](https://www.github.com/), for example). But it is sometimes
+necessary.
+
+1. Create repo on git.baserock.org:
+
+        ssh git@git.baserock.org create baserock/baserock/$NAME
+        ssh git@git.baserock.org config baserock/baserock/$NAME \
+            set project.description "$DESCRIPTION"
+
+    The 'lorry-controller' service on gerrit.baserock.org will automatically
+    create the corresponding project in Gerrit whenever it next runs.
+
+2. Add project in Storyboard. First edit `baserock_storyboard/projects.yaml`
+   add the new project to the list, then:
+
+        scp baserock_storyboard/projects.yaml ubuntu@storyboard.baserock.org:
+        ssh ubuntu@storyboard.baserock.org storyboard-db-manage load_projects projects.yaml
+
+3. Submit a patch for infrastructure.git with your changes, and submit to Gerrit.
