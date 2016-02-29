@@ -1,0 +1,36 @@
+#!/bin/sh
+#
+# Copyright (C) 2016  Codethink Limited
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 2 of the License.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+# Generator script for docs.baserock.org website.
+#
+# This can be run as a cron job or Git post-receive hook, to get auto-updating
+# documentation built from Git repos.
+
+
+set -e
+
+cd ~
+if [ ! -d spec.git ]; then
+    git clone git://git.baserock.org/baserock/baserock/spec.git spec.git
+    cd spec.git
+else
+    cd spec.git
+    git checkout master
+    git pull origin master
+fi
+
+~/.local/bin/mkdocs build

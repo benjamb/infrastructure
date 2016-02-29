@@ -1,0 +1,43 @@
+# Configuration for docs.baserock.org site.
+#
+# This expects to be run after image-config.yml.
+- hosts: webserver
+  gather_facts: False
+  tasks:
+  - name: /srv/docs.baserock.org/
+    file: path=/srv/docs.baserock.org/ owner=fedora state=directory
+
+  - name: git
+    dnf: name=git state=latest
+    sudo: yes
+
+  - name: mkdocs documentation generator
+    pip: name=mkdocs executable=pip3.4 extra_args="--user"
+
+  # A lot of the mkdocs themes are totally broken without Javascript, which
+  # is stupid. This one looks a little bit ugly without Javascript, but it
+  # is mostly usable.
+  - name: mkdocs 'material' theme
+    pip: name=mkdocs-material executable=pip3.4 extra_args="--user"
+
+  - name: generate-docs.baserock.org script
+    copy: src=generate-docs.baserock.org dest=/home/fedora/ mode=755
+
+  - name: generate-docs.baserock.org systemd unit
+    copy: src=etc/systemd/system/generate-docs.baserock.org.service dest=/etc/systemd/system/
+    sudo: yes
+
+  - name: generate-docs.baserock.org systemd timer
+    copy: src=etc/systemd/system/generate-docs.baserock.org.timer dest=/etc/systemd/system/
+    sudo: yes
+
+  # FIXME: it would be much cooler to monitor the output of `gerrit
+  # stream-events`, or have a git post-receive hook installed on
+  # git.baserock.org to trigger this.
+  - name: enable generate-docs.baserock.org timer
+    service: name=generate-docs.baserock.org.timer state=started enabled=yes
+    sudo: yes
+
+  - name: enable generate-docs.baserock.org service
+    service: name=generate-docs.baserock.org.service enabled=yes
+    sudo: yes

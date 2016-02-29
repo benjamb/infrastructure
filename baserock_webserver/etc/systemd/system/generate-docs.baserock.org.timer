@@ -1,0 +1,8 @@
+[Unit]
+Description = Generate docs.baserock.org content
+
+[Timer]
+OnUnitActiveSec = 10min
+
+[Install]
+WantedBy = default.target

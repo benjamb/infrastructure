@@ -1,0 +1,11 @@
+[Unit]
+Description = Generate docs.baserock.org content
+
+[Service]
+Type = oneshot
+ExecStart = /home/fedora/generate-docs.baserock.org
+User = fedora
+Group = fedora
+
+[Install]
+WantedBy=default.target
