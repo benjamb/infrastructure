@@ -1,0 +1,24 @@
+# Configuration for Baserock webserver system image.
+#
+# This expects to be run on a Fedora 22 cloud image.
+---
+- hosts: webserver
+  gather_facts: false
+  sudo: yes
+  tasks:
+  - name: enable persistant journal
+    shell: mkdir /var/log/journal
+    args:
+      creates: /var/log/journal
+
+  - name: ensure system up to date
+    dnf: name=* state=latest
+
+  - name: SELinux configuration (setting it to 'permissive' mode)
+    copy: src=etc/selinux/config dest=/etc/selinux/
+
+  - name: Cherokee webserver package
+    dnf: name=cherokee state=latest
+
+  - name: Cherokee configuration
+    copy: src=etc/cherokee/cherokee.conf dest=/etc/cherokee/
