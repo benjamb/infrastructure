@@ -15,6 +15,8 @@ strata:
   morph: strata/connectivity.morph
 - name: connman-common
   morph: strata/connman-common.morph
+- name: device-management
+  morph: strata/device-management.morph
 - name: audio-bluetooth
   morph: strata/audio-bluetooth.morph
 - name: glib-common
@@ -31,8 +33,8 @@ strata:
   morph: strata/wayland-generic.morph
 - name: graphics-common
   morph: strata/graphics-common.morph
-- name: input-genivi
-  morph: strata/input-genivi.morph
+- name: input-common
+  morph: strata/input-common.morph
 - name: llvm-common
   morph: strata/llvm-common.morph
 - name: mesa-common

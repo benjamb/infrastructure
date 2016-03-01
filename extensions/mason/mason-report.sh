@@ -269,7 +269,7 @@ if [ "$RESULT" = skip ]; then
 fi
 
 DURATION=$(( $(date +%s) - $(date --date="$START_TIME" +%s) ))
-SHA1="$(cd "ws/$DEFINITIONS_REF/$UPSTREAM_TROVE_ADDRESS/baserock/baserock/definitions" && git rev-parse HEAD)"
+SHA1="$(cd "/ws/mason-definitions-$DEFINITIONS_REF" && git rev-parse HEAD)"
 BUILD_LOG="log/${SHA1}--${START_TIME}.log"
 
 update_report "$START_TIME" \
@@ -293,5 +293,5 @@ mv "$logfile" "$SERVER_PATH/$BUILD_LOG"
 # Cleanup
 
 mkdir -p /srv/distbuild/remove
-mv /srv/distbuild/!(remove) /srv/distbuild/remove
-rm -r /srv/distbuild/remove
+find /srv/distbuild/ -not \( -name "remove" -o -name "trees.cache.pickle" \) -mindepth 1 -maxdepth 1 -exec  mv '{}' /srv/distbuild/remove \;
+find /srv/distbuild/remove -delete

@@ -16,7 +16,6 @@ build-depends:
 - morph: strata/network-security.morph
 - morph: strata/privileges-management.morph
 - morph: strata/python3-gobject.morph
-- morph: strata/python2-core.morph
 - morph: strata/wayland-generic.morph
 - morph: strata/ruby.morph
 - morph: strata/samba.morph
@@ -542,7 +541,7 @@ chunks:
   morph: strata/gnome/desktop-file-utils.morph
   repo: upstream:desktop-file-utils
   ref: 4944725bddcf5821d53d7d648fc53347ce12cc03
-  unpetrify-ref: 0.22
+  unpetrify-ref: "0.22"
 - name: gnome-terminal
   morph: strata/gnome/gnome-terminal.morph
   repo: upstream:gnome/gnome-terminal
@@ -634,11 +633,6 @@ chunks:
   repo: upstream:gnome/libgtop
   ref: ac2aef0f47fd998555abf18003f4c11ffecbf542
   unpetrify-ref: 2.32.0
-  build-system: autotools
-- name: libwacom
-  repo: upstream:linuxwacom/libwacom
-  ref: c707d0f98c79260cb72b5d2bdded50b4e816e350
-  unpetrify-ref: libwacom-0.15
   build-system: autotools
 - name: gnome-bluetooth
   repo: upstream:gnome/gnome-bluetooth
@@ -733,7 +727,6 @@ chunks:
   - libcanberra
   - libgtop
   - libpwquality
-  - libwacom
   - network-manager-applet
 - name: gnome-initial-setup
   morph: strata/gnome/gnome-initial-setup.morph
@@ -763,7 +756,7 @@ chunks:
   build-system: autotools
   repo: upstream:sound-theme-freedesktop
   ref: 9d2ac65a2f88263f0eec8b777ef3bdc023b93c25
-  unpetrify-ref: 0.8
+  unpetrify-ref: "0.8"
 - name: libwnck
   morph: strata/gnome/libwnck.morph
   repo: upstream:libwnck

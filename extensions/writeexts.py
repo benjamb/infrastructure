@@ -15,19 +15,19 @@
 
 import contextlib
 import errno
-import fcntl
 import logging
 import os
-import partitioning
-import pyfdisk
 import re
-import select
 import shutil
 import stat
 import subprocess
 import sys
 import time
 import tempfile
+
+import partitioning
+import pyfdisk
+import writeexts
 
 
 if sys.version_info >= (3, 3, 0):
@@ -278,7 +278,7 @@ class WriteExtension(Extension):
             self.create_partitioned_system(temp_root, location)
         else:
             self.format_btrfs(location)
-            self.create_system(temp_root, location)
+            self.create_unpartitioned_system(temp_root, location)
 
     @contextlib.contextmanager
     def created_disk_image(self, location):
@@ -299,13 +299,24 @@ class WriteExtension(Extension):
             sys.stderr.write('Error creating disk image')
             raise
 
-    def create_system(self, temp_root, raw_disk):
+    def create_unpartitioned_system(self, temp_root, raw_disk):
+        '''Deploy a bootable Baserock system within a single Btrfs filesystem.
+
+        Called if USE_PARTITIONING=no (the default) is set in the deployment
+        options.
+
+        '''
         with self.mount(raw_disk) as mp:
             try:
-                self.create_btrfs_system_layout(
+                self.create_versioned_layout(mp, version_label='factory')
+                self.create_btrfs_system_rootfs(
                     temp_root, mp, version_label='factory',
                     rootfs_uuid=self.get_uuid(raw_disk))
-            except BaseException as e:
+                if self.bootloader_config_is_wanted():
+                    self.create_bootloader_config(
+                        temp_root, mp, version_label='factory',
+                        rootfs_uuid=self.get_uuid(raw_disk))
+            except BaseException:
                 sys.stderr.write('Error creating Btrfs system layout')
                 raise
 
@@ -419,7 +430,7 @@ class WriteExtension(Extension):
             else:
                 subprocess.check_call(['mount', '-o', 'loop',
                                        location, mount_point])
-        except BaseException as e:
+        except BaseException:
             sys.stderr.write('Error mounting filesystem')
             os.rmdir(mount_point)
             raise
@@ -430,16 +441,47 @@ class WriteExtension(Extension):
             subprocess.check_call(['umount', mount_point])
             os.rmdir(mount_point)
 
-    def create_btrfs_system_layout(self, temp_root, mountpoint, version_label,
+    def create_versioned_layout(self, mountpoint, version_label):
+        '''Create a versioned directory structure within a partition.
+
+        The Baserock project has defined a 'reference upgrade mechanism'. This
+        mandates a specific directory layout. It consists of a toplevel
+        '/systems' directory, containing subdirectories named with a 'version
+        label'. These subdirectories contain the actual OS content.
+
+        For the root file system, a Btrfs partition must be used. For each
+        version, two subvolumes are created: 'orig' and 'run'. This is handled
+        in create_btrfs_system_rootfs().
+
+        Other partitions (e.g. /boot) can also follow the same layout. In the
+        case of /boot, content goes directly in the version directory. That
+        means there are no 'orig' and 'run' subvolumes, which avoids the
+        need to use Btrfs.
+
+        The `system-version-manager` tool from tbdiff.git is responsible for
+        deploying live upgrades, and it understands this layout.
+
+        '''
+        version_root = os.path.join(mountpoint, 'systems', version_label)
+
+        os.makedirs(version_root)
+        os.symlink(
+                version_label, os.path.join(mountpoint, 'systems', 'default'))
+
+    def create_btrfs_system_rootfs(self, temp_root, mountpoint, version_label,
                                    rootfs_uuid, device=None):
         '''Separate base OS versions from state using subvolumes.
 
+        The 'device' parameter should be a pyfdisk.Device instance,
+        as returned by partitioning.do_partitioning(), that describes the
+        partition layout of the target device. This is used to set up
+        mountpoints in the root partition for the other partitions.
+        If no 'device' instance is passed, no mountpoints are set up in the
+        rootfs.
+
         '''
-        initramfs = self.find_initramfs(temp_root)
         version_root = os.path.join(mountpoint, 'systems', version_label)
         state_root = os.path.join(mountpoint, 'state')
-
-        os.makedirs(version_root)
         os.makedirs(state_root)
 
         system_dir = self.create_orig(version_root, temp_root)
@@ -451,35 +493,37 @@ class WriteExtension(Extension):
 
         self.create_run(version_root)
 
-        os.symlink(
-                version_label, os.path.join(mountpoint, 'systems', 'default'))
-
-        if self.bootloader_config_is_wanted():
-            self.install_kernel(version_root, temp_root)
-            if self.get_dtb_path() != '':
-                self.install_dtb(version_root, temp_root)
-            self.install_syslinux_menu(mountpoint, version_root)
-            if initramfs is not None:
-                # Using initramfs - can boot a rootfs with a filesystem UUID
-                self.install_initramfs(initramfs, version_root)
-                self.generate_bootloader_config(mountpoint,
-                                                rootfs_uuid=rootfs_uuid)
-            else:
-                if device:
-                    # A partitioned disk or image - boot with partition UUID
-                    root_part = device.get_partition_by_mountpoint('/')
-                    root_guid = device.get_partition_uuid(root_part)
-                    self.generate_bootloader_config(mountpoint,
-                                                    root_guid=root_guid)
-                    if self.get_bootloader_install() == 'extlinux':
-                        self.install_syslinux_blob(device, system_dir)
-                else:
-                    # Unpartitioned and no initramfs - cannot boot with a UUID
-                    self.generate_bootloader_config(mountpoint)
-            self.install_bootloader(mountpoint)
-
         if device:
             self.create_partition_mountpoints(device, system_dir)
+
+    def create_bootloader_config(self, temp_root, mountpoint, version_label,
+                                 rootfs_uuid, device=None):
+        '''Setup the bootloader.
+
+        '''
+        initramfs = self.find_initramfs(temp_root)
+        version_root = os.path.join(mountpoint, 'systems', version_label)
+
+        self.install_kernel(version_root, temp_root)
+        if self.get_dtb_path() != '':
+            self.install_dtb(version_root, temp_root)
+        self.install_syslinux_menu(mountpoint, temp_root)
+        if initramfs is not None:
+            # Using initramfs - can boot a rootfs with a filesystem UUID
+            self.install_initramfs(initramfs, version_root)
+            self.generate_bootloader_config(mountpoint,
+                                            rootfs_uuid=rootfs_uuid)
+        else:
+            if device:
+                # A partitioned disk or image - boot with partition UUID
+                root_part = device.get_partition_by_mountpoint('/')
+                root_guid = device.get_partition_uuid(root_part)
+                self.generate_bootloader_config(mountpoint,
+                                                root_guid=root_guid)
+            else:
+                # Unpartitioned and no initramfs - cannot boot with a UUID
+                self.generate_bootloader_config(mountpoint)
+        self.install_bootloader(mountpoint)
 
     def create_partition_mountpoints(self, device, system_dir):
         '''Create (or empty) partition mountpoints in the root filesystem
@@ -736,7 +780,15 @@ class WriteExtension(Extension):
         '''
 
         self.status(msg='Creating extlinux.conf')
-        config = os.path.join(real_root, 'extlinux.conf')
+        # To be compatible with u-boot, create the extlinux.conf file in
+        # /extlinux/ rather than /
+        # Syslinux, however, requires this to be in /, so create a symlink
+        # as well
+        config_path = os.path.join(real_root, 'extlinux')
+        os.makedirs(config_path)
+        config = os.path.join(config_path, 'extlinux.conf')
+        os.symlink('extlinux/extlinux.conf', os.path.join(real_root,
+                                                          'extlinux.conf'))
 
         ''' Please also update the documentation in the following files
             if you change these default kernel args:
@@ -822,7 +874,7 @@ class WriteExtension(Extension):
                    'architecture? The MBR blob will only be built for x86'
                    'systems. You may wish to configure BOOTLOADER_INSTALL')
 
-    def install_syslinux_menu(self, real_root, version_root):
+    def install_syslinux_menu(self, real_root, temp_root):
         '''Make syslinux/extlinux menu binary available.
 
         The syslinux boot menu is compiled to a file named menu.c32. Extlinux
@@ -833,8 +885,8 @@ class WriteExtension(Extension):
         not be able to show a menu.
 
         '''
-        menu_file = os.path.join(version_root, 'orig',
-            'usr', 'share', 'syslinux', 'menu.c32')
+        menu_file = os.path.join(temp_root, 'usr', 'share', 'syslinux',
+                                 'menu.c32')
         if os.path.isfile(menu_file):
             self.status(msg='Copying menu.c32')
             shutil.copy(menu_file, real_root)
@@ -902,8 +954,11 @@ class WriteExtension(Extension):
             raise
 
     def create_partitioned_system(self, temp_root, location):
-        '''Create a Baserock system in a partitioned disk image or device'''
+        '''Deploy a bootable Baserock system with a custom partition layout.
 
+        Called if USE_PARTITIONING=yes is set in the deployment options.
+
+        '''
         part_spec = os.environ.get('PARTITION_FILE', 'partitioning/default')
 
         disk_size = self.get_disk_size()
@@ -912,6 +967,7 @@ class WriteExtension(Extension):
 
         dev = partitioning.do_partitioning(location, disk_size,
                                            temp_root, part_spec)
+        boot_partition_available = dev.get_partition_by_mountpoint('/boot')
 
         for part in dev.partitionlist:
             if not hasattr(part, 'mountpoint'):
@@ -931,8 +987,23 @@ class WriteExtension(Extension):
                     # Install root filesystem
                     rfs_uuid = self.get_uuid(location, part.extent.start *
                                                 dev.sector_size)
-                    self.create_btrfs_system_layout(temp_root, part_mount_dir,
-                                                    'factory', rfs_uuid, dev)
+                    self.create_versioned_layout(part_mount_dir, 'factory')
+                    self.create_btrfs_system_rootfs(temp_root, part_mount_dir,
+                                                   'factory', rfs_uuid, dev)
+
+                    # If there's no /boot partition, but we do need to generate
+                    # a bootloader configuration file, then it needs to go in
+                    # the root partition.
+                    if (boot_partition_available is False
+                            and self.bootloader_config_is_wanted()):
+                        self.create_bootloader_config(
+                            temp_root, part_mount_dir, 'factory', rfs_uuid,
+                            dev)
+
+                    if self.get_bootloader_install() == 'extlinux':
+                        # The extlinux/syslinux MBR blob always needs to be
+                        # installed in the root partition.
+                        self.install_syslinux_blob(dev, temp_root)
                 else:
                     # Copy files to partition from unpacked rootfs
                     src_dir = os.path.join(temp_root,
@@ -940,6 +1011,16 @@ class WriteExtension(Extension):
                     self.status(msg='Copying files to %s partition' %
                                      part.mountpoint)
                     self.copy_dir_contents(src_dir, part_mount_dir)
+
+                if (part.mountpoint == '/boot' and
+                        self.bootloader_config_is_wanted()):
+                    # We need to mirror the layout of the root partition in the
+                    # /boot partition. Each kernel lives in its own
+                    # systems/$version_label/ directory within the /boot
+                    # partition.
+                    self.create_versioned_layout(part_mount_dir, 'factory')
+                    self.create_bootloader_config(temp_root, part_mount_dir,
+                        'factory', None, dev)
 
         # Write raw files to disk with dd
         partitioning.process_raw_files(dev, temp_root)

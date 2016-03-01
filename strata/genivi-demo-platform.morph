@@ -25,11 +25,6 @@ chunks:
   repo: upstream:audiomanager
   ref: bb65a4d0a18667baa64e5ba40104dc2cda06b299
   unpetrify-ref: baserock/genivi/genivi-demo-platform
-- name: navit
-  morph: strata/genivi-demo-platform/navit.morph
-  repo: upstream:navit-svn
-  ref: 358812af2c27c4abe324beb205e6d156b96fb1ea
-  unpetrify-ref: master
 - name: audiomanager@gdp
   morph: strata/genivi-demo-platform/audiomanager@gdp.morph
   repo: upstream:audiomanager
@@ -45,5 +40,5 @@ chunks:
 - name: genivi-demo-platform-hmi
   morph: strata/genivi-demo-platform/genivi-demo-platform-hmi.morph
   repo: upstream:genivi/genivi-demo-platform-hmi
-  ref: 253e30329f1d22c859e07150533702c2d3f986d5
-  unpetrify-ref: baserock/genivi/gdp-0.1
+  ref: f56acfadb5400087c1bb935406fcb005e315f27f
+  unpetrify-ref: baserock/weston-1.9-wip
