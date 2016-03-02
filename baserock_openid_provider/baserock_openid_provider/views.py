@@ -35,17 +35,16 @@ class RegistrationViewWithNames(registration.backends.default.views.Registration
     # including the full name gets used.
     form_class = forms.RegistrationFormWithNames
 
-    def register(self, request, **cleaned_data):
+    def register(self, form):
         # Calling the base class first means that we don't have to copy and
         # paste the contents of the register() function, but it has the
         # downside that we don't know the user's name when we send the
         # activation email.
         superclass = super(RegistrationViewWithNames, self)
-        user = superclass.register(request, **cleaned_data)
+        user = superclass.register(form)
 
-        first_name, last_name = cleaned_data['first_name'], cleaned_data['last_name']
-        user.first_name = first_name
-        user.last_name = last_name
+        user.first_name = form.cleaned_data['first_name']
+        user.last_name = form.cleaned_data['last_name']
         user.save()
 
         return user
