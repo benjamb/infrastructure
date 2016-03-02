@@ -13,7 +13,7 @@ import yaml
 import os
 
 # You must ensure this is the correct IP address!
-DATABASE_HOST = '192.168.222.30'
+DATABASE_HOST = '192.168.222.146'
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
