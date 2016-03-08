@@ -9,8 +9,14 @@
   sudo: yes
   vars:
     # The 'backup' key cannot be used to SSH into the 'frontend' machine except
-    # from this IP.
-    PERMITTED_BACKUP_HOSTS: 82.70.136.246/32
+    # from these IPs.
+    #
+    # 82.70.136.246 is Codethink's Zen Internet line.
+    # 86.134.108.84 is a BT Internet IP currently in use by Codethink.
+    #
+    # The backup SSH private key is the main secret needed to connect as the
+    # backup user. This IP restriction is just for a bit of extra safety.
+    PERMITTED_BACKUP_HOSTS: 82.70.136.246/32,86.134.108.84/32
   tasks:
     - name: backup user
       user:
