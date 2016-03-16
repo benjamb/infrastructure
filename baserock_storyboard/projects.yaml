@@ -26,6 +26,10 @@
   description: Lorry mirroring tool
   use-storyboard: true
 
+- project: baserock/lorry-controller
+  description: Lorry Controller scheduling and management tool
+  use-storyboard: true
+
 - project: baserock/morph
   description: Morph build tool
   use-storyboard: true
