@@ -1,0 +1,11 @@
+[Unit]
+Description=Baserock Export daemon
+After=local-fs.target network-online.target
+
+[Service]
+User=opengrok
+ExecStart={{ EXPORT_WORKDIR }}/export.sh
+
+
+[Install]
+WantedBy=multi-user.target

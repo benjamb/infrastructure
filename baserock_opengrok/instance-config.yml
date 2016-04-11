@@ -1,0 +1,163 @@
+# Configuration for Baserock OpenGrok system image.
+#
+# This expects to be run on a Fedora 23 cloud image.
+---
+- hosts: opengrok
+  gather_facts: false
+  sudo: yes
+  vars:
+    OG_VERSION: 0.12.1.5
+    EXPORT_WORKDIR: /opt/export-workdir
+    BASEROCK_EXPORT: /opt/baserock-export
+    OPENGROK_BASE: /opt/opengrok
+  tasks:
+  # See: https://fedoramagazine.org/getting-ansible-working-fedora-23/
+  - name: install Python2 and required deps for Ansible modules
+    raw: dnf install -y python2 python2-dnf libselinux-python
+
+  - name: enable persistant journal
+    shell: mkdir /var/log/journal
+    args:
+      creates: /var/log/journal
+
+  - name: ensure system up to date
+    dnf: name=* state=latest
+
+  - name: Install Tomcat, wget, git, and ctags packages
+    dnf:
+      name: "{{ item }}"
+      state: latest
+    with_items:
+    - tomcat
+    - wget
+    - git
+    - ctags
+
+  - name: Enable and start Tomcat
+    service:
+        name: tomcat
+        enabled: yes
+
+  - name: add opengrok user
+    user:
+      name: opengrok
+      shell: /bin/false
+
+  - name: create /opt/.. directories
+    file:
+      path: "{{ item }}"
+      state: directory
+      owner: opengrok
+      group: opengrok
+    with_items:
+    - "{{ OPENGROK_BASE }}"
+    - /opt/downloads
+    - "{{ BASEROCK_EXPORT }}"
+    - "{{ EXPORT_WORKDIR }}"
+
+  - name: Download opengrok
+    shell: wget https://java.net/projects/opengrok/downloads/download/opengrok-{{ OG_VERSION }}.tar.gz -O /opt/downloads/opengrok-{{ OG_VERSION }}.tar.gz
+    args:
+      creates: /opt/downloads/opengrok-{{ OG_VERSION }}.tar.gz
+    sudo_user: opengrok
+
+  - name: Unpack opengrok
+    unarchive:
+      src: /opt/downloads/opengrok-{{ OG_VERSION }}.tar.gz
+      copy: no
+      dest: /opt/downloads
+      owner: opengrok
+      group: opengrok
+      creates: /opt/downloads/opengrok-{{ OG_VERSION }}
+    register: opengrok_unpacked
+
+  - name: Copy OpenGrok to the right location
+    shell: cp -r /opt/downloads/opengrok-{{ OG_VERSION }}/* "{{ OPENGROK_BASE }}"
+    when: opengrok_unpacked|changed
+
+  - name: Install morph dependencies
+    pip:
+      name: "{{ item }}"
+    with_items:
+    - fs
+    - pylru
+    - pyyaml
+    - jsonschema
+
+  - name: Downloading baserock-export scripts
+    git:
+      repo: git://github.com/ssssam/baserock-export
+      dest: "{{ BASEROCK_EXPORT }}"
+      accept_hostkey: yes
+    sudo_user: opengrok
+
+  - name: Install baserock-export wrapper script
+    template:
+      src: export.sh
+      dest: "{{ EXPORT_WORKDIR }}/export.sh"
+      mode: 0755
+      owner: opengrok
+      group: opengrok
+
+  - name: Install baserock-export service
+    template:
+      src: baserock-export.service
+      dest: /etc/systemd/system/baserock-export.service
+
+  - name: Install baserock-export timer
+    copy:
+      src: baserock-export.timer
+      dest: /etc/systemd/system/baserock-export.timer
+
+  - name: Enable and start baserock-export services
+    service:
+        name: "{{ item }}"
+        enabled: yes
+        state: started
+    with_items:
+    - baserock-export.timer
+    - baserock-export.service
+
+  - name: Deploy OpenGrok app in Tomcat
+    shell: OPENGROK_TOMCAT_BASE=/var/lib/tomcat "{{ OPENGROK_BASE }}/bin/OpenGrok" deploy
+
+  - name: Create ROOT folder for Tomcat
+    file:
+      path: /var/lib/tomcat/webapps/ROOT
+      state: directory
+      owner: tomcat
+      group: tomcat
+
+  - name: Redirect / to /source (OpenGrok) in Tomcat
+    copy:
+      src: index.jsp
+      dest: /var/lib/tomcat/webapps/ROOT/index.jsp
+      owner: tomcat
+      group: tomcat
+
+  - name: Install clone-and-index wrapper script
+    template:
+      src: clone-and-index.sh
+      dest: "{{ OPENGROK_BASE }}/clone-and-index.sh"
+      mode: 0755
+      owner: opengrok
+      group: opengrok
+
+  - name: Install clone-and-index service
+    template:
+      src: clone-and-index.service
+      dest: /etc/systemd/system/clone-and-index.service
+
+  - name: Install clone-and-index timer
+    copy:
+      src: clone-and-index.timer
+      dest: /etc/systemd/system/clone-and-index.timer
+
+  - name: Enable and start clone-and-index services
+    service:
+        name: "{{ item }}"
+        enabled: yes
+        state: started
+    with_items:
+    - clone-and-index.timer
+    - clone-and-index.service

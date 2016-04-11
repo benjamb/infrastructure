@@ -22,6 +22,7 @@ database-mariadb ansible_ssh_host=192.168.222.146
 mail ansible_ssh_host=192.168.222.145
 openid ansible_ssh_host=192.168.222.144
 webserver ansible_ssh_host=192.168.222.127
+opengrok ansible_ssh_host=192.168.222.149
 
 [ubuntu]
 paste ansible_ssh_host=192.168.222.6

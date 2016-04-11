@@ -1,0 +1,11 @@
+[Unit]
+Description=OpenGrok index daemon
+After=local-fs.target network-online.target
+
+[Service]
+User=opengrok
+ExecStart={{ OPENGROK_BASE }}/clone-and-index.sh
+
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,10 @@
+[Unit]
+Description=Runs baserock-export with 5 min between calls
+
+[Timer]
+#Time between baserock-export finishing and calling it again
+OnUnitActiveSec=5min
+Unit=baserock-export.service
+
+[Install]
+WantedBy=multi-user.target
