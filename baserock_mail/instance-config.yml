@@ -7,7 +7,7 @@
   sudo: yes
   vars:
     LOCAL_IP: 192.168.222.145
-    PUBLIC_IP: 185.43.218.171
+    PUBLIC_DOMAIN_NAME: mail.baserock.org
   tasks:
   # Fedora provides a default /etc/exim/exim.conf. Rather than copy it and
   # overwrite it, since we only need to make a few changes, I've used the
@@ -65,7 +65,7 @@
   - name: set primary hostname to public IP
     lineinfile:
       regexp: '^#?\s+primary_hostname =.*$'
-      line: 'primary_hostname = {{ PUBLIC_IP }}'
+      line: 'primary_hostname = {{ PUBLIC_DOMAIN_NAME }}'
       dest: /etc/exim/exim.conf
 
   - name: exim4 service
