@@ -1,0 +1,292 @@
+# This Ansible playbook installs and configures Lorry and its controller on a
+# GitLab instance running on Ubuntu.
+---
+- hosts: gitlab
+  gather_facts: no
+
+  vars:
+    lorry: {
+      url: "http://git.baserock.org/git/baserock/baserock/lorry.git",
+      dest: "/tmp/lorry",
+      version: "c06dc5acf0e712827ca52d6611c3b13dab6744fd"}
+    controller: {
+      url: "http://git.baserock.org/git/baserock/baserock/lorry-controller.git",
+      dest: "/tmp/controller",
+      version: "master"}
+    bzrfi: {
+      url: "http://git.baserock.org/git/delta/bzr-fastimport.git",
+      dest: "/tmp/bzrfi",
+      version: "6978da619c1c9dbee6554ffa70484e48b7f1e9d1"}
+
+  vars_files:
+    - gitlab-vars.yml
+
+  tasks:
+    - include: pre-run.yml
+
+    - name: install dependencies
+      apt: name={{ item }}
+      with_items:
+        - python-pip
+        - subversion
+        - git-svn
+        - bzr
+        - python-fastimport
+        - hg-fast-export
+        - git-cvs
+        - python-cliapp
+        - python-bottle
+        - python-flup
+        - python-requests
+        - lighttpd
+        - curl
+      become: yes
+
+    - name: disable default lighttpd service
+      service: name=lighttpd state=stopped enabled=no
+      become: yes
+
+    - name: install additional python modules
+      pip: name={{ item }}
+      with_items:
+        - python-gitlab
+        - yoyo-migrations
+      become: yes
+
+    - name: clone required gits (lorry, lorry-controller, bzr-fastimport)
+      git: repo={{ item.url }} dest={{ item.dest }} version={{ item.version }}
+      with_items:
+        - "{{ lorry }}"
+        - "{{ controller }}"
+        - "{{ bzrfi }}"
+
+    - name: install lorry-controller
+      pip: name="." chdir={{ item }} state=latest
+           extra_args="--install-option '--prefix=/usr' --install-option '--install-layout=deb'"
+      with_items:
+        - "{{ lorry.dest }}"
+        - "{{ controller.dest }}"
+        - "{{ bzrfi.dest }}"
+      become: yes
+
+    - name: install lorry-controller units
+      shell: install -m 0644 units/*.service units/*.timer /usr/lib/systemd/system/.
+             chdir="{{ controller.dest }}"
+      become: yes
+
+    - name: install lorry-controller lighttpd conf
+      shell: install -m 0644 -D etc/lighttpd/*.conf /etc/lighttpd/.
+             chdir="{{ controller.dest }}"
+      become: yes
+
+    - name: create lorry user on host
+      user: name=lorry comment="Lorry mirroring service" generate_ssh_key=yes
+      become: yes
+
+    - name: save lorry public key
+      command: cat "/home/lorry/.ssh/id_rsa.pub"
+      become: yes
+      register: lorry_public_key
+
+    - name: get gitlab private token
+      uri: {
+        url: "http://localhost/api/v3/session", method: POST,
+        body_format: json, status_code: 201,
+        body: {login: "{{ gitlab_account.user }}",
+               password: "{{ gitlab_account.pass }}"}}
+      register: login
+
+    - name: check lorry user exists in gitlab
+      uri: {
+        url: "http://localhost/api/v3/users",
+        method: GET, body: "username=lorry",
+        headers: {PRIVATE-TOKEN: "{{ login.json.private_token }}"}}
+      register: lorry_user
+
+    - name: create lorry gitlab user
+      uri: {
+        url: "http://localhost/api/v3/users", method: POST, body_format: json,
+        headers: {PRIVATE-TOKEN: "{{ login.json.private_token }}"},
+        status_code: 201,
+        body: {name: lorry, username: lorry, confirm: "false",
+               email: "{{ lorry_gitlab_account.email }}",
+               password: "{{ lorry_gitlab_account.pass }}"}}
+      when: not lorry_user.json
+
+    - name: get gitlab lorry user info
+      uri: {
+        url: "http://localhost/api/v3/users",
+        method: GET, body: "username=lorry",
+        headers: {PRIVATE-TOKEN: "{{ login.json.private_token }}"}}
+      register: lorry_user
+
+    - name: check lorry key has been added to gitlab
+      uri: {
+        url: "http://localhost/api/v3/users/{{ lorry_user.json[0].id }}/keys",
+        method: GET, body: "title=lorry",
+        headers: {PRIVATE-TOKEN: "{{ login.json.private_token }}"}}
+      register: ssh_key
+
+    - name: add lorry public key to gitlab
+      uri: {
+        url: "http://localhost/api/v3/users/{{ lorry_user.json[0].id }}/keys",
+        method: POST, body_format: json, status_code: 201,
+        headers: {PRIVATE-TOKEN: "{{ login.json.private_token }}"},
+        body: {title: lorry, key: "{{ lorry_public_key.stdout }}",
+               id: "{{ lorry_user.json[0].id }}"}}
+      when: not ssh_key.json
+
+    - name: get lorry private token
+      uri: {
+        url: "http://localhost/api/v3/session", method: POST, body_format: json,
+        body: {login: "lorry", password: "{{ lorry_gitlab_account.pass }}"},
+        status_code: 201}
+      register: lorry_login
+
+    - name: directory in /etc for lorry controller system configuration
+      file: dest=/etc/lorry-controller state=directory
+      become: yes
+
+    - name: copy configuration for lorry and its controller
+      template: src=templates/{{ item }} dest=/etc/{{ item }}
+      with_items:
+        - lorry.conf
+        - lorry-controller/webapp.conf
+        - lorry-controller/minion.conf
+      become: yes
+
+    - name: link lc-status.html
+      file: src={{ item.src }} state=link force=yes dest={{ item.dest }}
+      with_items:
+        - src: /home/lorry/lc-status.html
+          dest: /opt/gitlab/embedded/service/gitlab-rails/public/lc-status.html
+        - src: /usr/share/lorry-controller/static/
+          dest: /opt/gitlab/embedded/service/gitlab-rails/public/static
+      become: yes
+
+    - name: check local-config group exists
+      uri: {
+        url: "http://localhost/api/v3/groups",
+        method: GET, body: "name=local-config",
+        headers: {PRIVATE-TOKEN: "{{ lorry_login.json.private_token }}"}}
+      register: local_config
+
+    - name: create local-config group
+      uri: {
+        url: "http://localhost/api/v3/groups",
+        method: POST, body_format: json, status_code: 201,
+        headers: {PRIVATE-TOKEN: "{{ lorry_login.json.private_token }}"},
+        body: {name: local-config, path: local-config}}
+      when: not local_config.json
+
+    - name: get local-config group
+      uri: {
+        url: "http://localhost/api/v3/groups",
+        method: GET, body: "name=local-config",
+        headers: {PRIVATE-TOKEN: "{{ lorry_login.json.private_token }}"}}
+      register: local_config
+
+    - name: check lorries.git exists
+      uri: {
+        url: "http://localhost/api/v3/projects",
+        method: GET, body: "name=lorries&namespace.name=local-config",
+        headers: {PRIVATE-TOKEN: "{{ lorry_login.json.private_token }}"}}
+      register: lorries
+
+    - name: create lorries.git
+      uri: {
+        url: "http://localhost/api/v3/projects",
+        method: POST, body_format: json, status_code: 201,
+        headers: {PRIVATE-TOKEN: "{{ lorry_login.json.private_token }}"},
+        body: {name: lorries, public: "true",
+               namespace_id: "{{ local_config.json[0].id }}"}}
+      when: not lorries.json
+
+    - file: path=/tmp/lorries state=absent
+      become: yes
+
+    - name: clone lorries.git
+      shell: |
+             ssh-keyscan localhost >> /home/lorry/.ssh/known_hosts
+             git clone "ssh://git@localhost/local-config/lorries.git" /tmp/lorries
+      become: yes
+      become_user: lorry
+
+    - name: create lorries directory structure
+      file: path=/tmp/lorries/upstream-lorries state=directory owner=lorry
+      become: yes
+
+    - name: set-fact
+      set_fact:
+        upstream_trove_stanza: {
+            type: "trove",
+            host: "{{ upstream_trove }}",
+            protocol: "http",
+            ls-interval: "4H",
+            interval: "2H",
+            prefixmap: {
+                baserock: "baserock",
+                delta: "delta"
+            },
+            ignore: [
+                "baserock/lorries"
+            ]
+        }
+      when: upstream_trove is not none
+
+    - name: copy base lorry controller config
+      template: src=templates/{{ item.src }} dest=/tmp/lorries/{{ item.dest }}
+      with_items:
+        - src: lorry-controller.conf
+          dest: .
+        - src: README.upstream
+          dest: upstream-lorries/README
+      become: yes
+      become_user: lorry
+
+    - name: push config to lorries.git
+      shell: |
+             git config user.email "lorry@$(hostname)"
+             git config user.name "lorry"
+             git add *
+             git commit -m "Ansible generated configuration"
+             git push origin master
+      args:
+        chdir: "/tmp/lorries"
+      become: yes
+      become_user: lorry
+
+    - name: enable and restart lorry-controller webapp
+      service: name=lighttpd-lorry-controller-webapp.service
+               enabled=yes state=restarted
+      become: yes
+
+    - name: enable and start minions
+      service: name=lorry-controller-minion@{{ item }}.service
+               enabled=yes state=started
+      with_sequence: count={{ lorry_controller_minions }}
+      become: yes
+
+    - name: enable lorry-controller scheduled activity timers
+      service: name={{ item }} enabled=yes state=started
+      with_items:
+        - lorry-controller-ls-troves.service
+        - lorry-controller-readconf.service
+        - lorry-controller-remove-ghost-jobs.service
+        - lorry-controller-remove-old-jobs.service
+        - lorry-controller-status.service
+        - lorry-controller-ls-troves.timer
+        - lorry-controller-readconf.timer
+        - lorry-controller-remove-ghost-jobs.timer
+        - lorry-controller-remove-old-jobs.timer
+        - lorry-controller-status.timer
+      become: yes
+
+    - name: cleanup
+      file: path={{ item }} state=absent
+      with_items:
+        - "{{ lorry.dest }}"
+        - "{{ controller.dest }}"
+        - "{{ bzrfi.dest }}"
+        - "/tmp/lorries"
+      become: yes

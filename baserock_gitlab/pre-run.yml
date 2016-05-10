@@ -1,0 +1,8 @@
+---
+- name: ansible bootstrap
+  raw: apt-get install -y python
+  become: yes
+
+- name: update apt cache
+  apt: update_cache=yes
+  become: yes

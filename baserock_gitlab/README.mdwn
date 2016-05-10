@@ -1,0 +1,20 @@
+# Deploying GitLab on Ubuntu with Lorry Controller
+Create a VM with either [Ubuntu 16.04 server edition](http://releases.ubuntu.com/16.04/ubuntu-16.04-server-amd64.iso)
+or [Debian Jessie](http://cdimage.debian.org/debian-cd/8.4.0/amd64/iso-cd/debian-8.4.0-amd64-netinst.iso)
+and ensure an ssh server is running (`systemctl status sshd`), if not
+`apt-get install openssh-server` and copy over the public key from your host
+with ssh-copy-id.
+
+The scripts here use features that require version 2.1 of ansible, which may
+require you to use the version from pip.
+
+To install GitLab and it's dependencies (from your host):
+
+    ansible-playbook -i hosts -K instance-config.yml
+
+You will then need to access the web interface in your browser in order to set
+the password for the initial account.  Update gitlab-vars.yml with the password
+you used and run the following to configure Lorry Controller (again, from your
+host):
+
+    ansible-playbook -i hosts -K configure-lorry.yml

@@ -1,0 +1,39 @@
+# Instance-specific configuration for a Ubuntu/Debian GitLab system.
+# Tested on Debian Jessie and Ubuntu Xenial.
+---
+- hosts: gitlab
+  gather_facts: no
+
+  vars:
+    gitlab_version: 8.8.5-ce.1
+    package_url: "https://packages.gitlab.com/gitlab/gitlab-ce/packages"
+    platform_package_url: "{{ package_url }}/{{ ansible_distribution }}/{{ ansible_distribution_release }}"
+    download_url: "{{ platform_package_url }}/gitlab-ce_{{ gitlab_version }}_amd64.deb/download"
+
+  tasks:
+    - include: pre-run.yml
+
+    - name: gather facts
+      setup:
+
+    - name: install dependencies
+      apt: name={{ item }}
+      with_items:
+        - openssh-server
+        - ca-certificates
+        - postfix
+      become: yes
+
+    - name: download gitlab release
+      get_url: url="{{ download_url }}" dest="/tmp/gitlab.deb"
+
+    - name: install gitlab release
+      apt: deb="/tmp/gitlab.deb"
+      become: yes
+
+    - name: configure and run gitlab
+      command: gitlab-ctl reconfigure
+      become: yes
+
+    - name: cleanup
+      file: path="/tmp/gitlab.deb" state=absent

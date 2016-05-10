@@ -1,0 +1,15 @@
+---
+# This must be set to the user/pass of the initially created admin account.
+gitlab_account: {
+  user: root,
+  pass: "5iveL!fe"
+}
+
+# The credentials for the lorry account to be created in GitLab.
+lorry_gitlab_account: {
+  email: "lorry@example.com",
+  pass: "insecure"
+}
+
+lorry_controller_minions: 1
+upstream_trove: null
