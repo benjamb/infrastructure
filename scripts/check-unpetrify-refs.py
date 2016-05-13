@@ -15,10 +15,11 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import os
-import sys
 import glob
-import yaml
+import argparse
 import subprocess
+
+import scriptslib
 
 
 '''
@@ -31,14 +32,6 @@ a missing or non-existent unpetrify-ref and if it fails to check the remote
 '''
 
 strata_dir = "strata"
-trove_host = "git.baserock.org"
-aliases = {
-  'baserock:': 'git://%(trove)s/baserock/',
-  'freedesktop:': 'git://anongit.freedesktop.org/',
-  'github:': 'git://github.com/',
-  'gnome:': 'git://git.gnome.org/',
-  'upstream:': 'git://%(trove)s/delta/'
-}
 
 def ref_exists(remote, ref):
     output = subprocess.check_output(
@@ -46,43 +39,31 @@ def ref_exists(remote, ref):
         stderr=subprocess.STDOUT).strip()
     return True if output else False
 
-def get_repo_url(repo):
-    remote = repo[:repo.find(':') + 1]
-    return repo.replace(remote, aliases[remote])
+def main():
+    parser = argparse.ArgumentParser(
+        description="Sanity checks unpetrify-refs in Baserock strata")
+    parser.add_argument("--trove-host", default="git.baserock.org",
+                        help="Trove host to map repo aliases to")
+    parser.add_argument("strata", nargs="*", metavar="STRATA",
+                        help="The strata to check (checks all by default)")
+    args = parser.parse_args()
 
-def definitions_root():
-    return subprocess.check_output(
-        ["git", "rev-parse", "--show-toplevel"]).strip()
-
-def load_yaml_file(yaml_file):
-    with open(yaml_file, 'r') as f:
-        return yaml.safe_load(f)
-
-def main(args):
-    global trove_host, aliases
-    opt = next(((i, j.split('=')[1]) for i, j in enumerate(args)
-              if j.startswith("--trove-host=")), None)
-    if opt:
-        trove_host = opt[1]
-        del args[opt[0]]
-    aliases = {k: v % {'trove': trove_host} for k, v in aliases.iteritems()}
-
-    if args:
-        strata = args
+    if args.strata:
+        strata = args.strata
     else:
-        strata_path = os.path.join(definitions_root(), strata_dir)
+        strata_path = os.path.join(scriptslib.definitions_root(), strata_dir)
         strata = glob.glob("%s/*.morph" % strata_path)
 
     for stratum in strata:
         path = os.path.relpath(stratum)
-        morphology = load_yaml_file(stratum)
+        morphology = scriptslib.load_yaml_file(stratum)
         for chunk in morphology['chunks']:
             unpetrify_ref = chunk.get("unpetrify-ref")
             if not unpetrify_ref:
                 print ("%s: '%s' has no unpetrify-ref!" %
                        (path, chunk['name']))
                 continue
-            remote = get_repo_url(chunk['repo'])
+            remote = scriptslib.parse_repo_alias(chunk['repo'], args.trove_host)
             try:
                 if not ref_exists(remote, unpetrify_ref):
                     print ("%s: unpetrify-ref for '%s' is not present on the "
@@ -92,4 +73,4 @@ def main(args):
                        (path, remote, chunk['name'], e.output.strip()))
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

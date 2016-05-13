@@ -13,8 +13,8 @@ chunks:
 - name: DLT-daemon
   morph: strata/genivi/DLT-daemon.morph
   repo: upstream:DLT-daemon
-  ref: 8b48e73f79b4463393916e4c6696917e3dedd026
-  unpetrify-ref: v2.10.0
+  ref: e9a486a08fff6d3cc7133a350cec3ee10f463207
+  unpetrify-ref: v2.15.0
 - name: node-startup-controller
   morph: strata/genivi/node-startup-controller.morph
   repo: upstream:node-startup-controller
@@ -48,8 +48,8 @@ chunks:
   - genivi-common-api-runtime
 - name: audiomanager
   repo: upstream:audiomanager
-  ref: 8725157e248c6706de59a02996f869b6ccdccb13
-  unpetrify-ref: '7.0'
+  ref: 49e010d6bd40929b00c4855ec3aab4cbafca906e
+  unpetrify-ref: '7.3'
   build-system: cmake
   build-depends:
   - DLT-daemon
@@ -71,10 +71,10 @@ chunks:
   - itzam-tarball
   - DLT-daemon
 - name: persistence-client-library
-  morph: strata/genivi/persistence-client-library.morph
   repo: upstream:genivi/persistence-client-library
-  ref: 39c68df2a9ee0b089212855f64a61fbd671b1a80
-  unpetrify-ref: baserock/v1.0.0
+  ref: 4b503da99c6b04ad21a197dafe6e7243187c7c7e
+  unpetrify-ref: v1.1.0
+  build-system: autotools
   build-depends:
   - persistence-common-object
   - DLT-daemon
@@ -87,11 +87,6 @@ chunks:
   build-depends:
   - DLT-daemon
   - persistence-client-library
-- name: libarchive
-  morph: strata/genivi/libarchive.morph
-  repo: upstream:libarchive
-  ref: 19f23e191f9d3e1dd2a518735046100419965804
-  unpetrify-ref: v3.1.2
 - name: persistence-administrator
   morph: strata/genivi/persistence-administrator.morph
   repo: upstream:genivi/persistence-administrator
@@ -100,7 +95,6 @@ chunks:
   build-depends:
   - persistence-common-object
   - DLT-daemon
-  - libarchive
   - node-state-manager
 - name: node-health-monitor
   repo: upstream:genivi/node-health-monitor

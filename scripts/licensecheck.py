@@ -23,10 +23,12 @@ import string
 import subprocess
 import sys
 import tempfile
-import yaml
+
+import scriptslib
 
 
 gpl3_chunks = ("autoconf",
+               "autoconf-tarball",
                "automake",
                "bash",
                "binutils",
@@ -37,26 +39,17 @@ gpl3_chunks = ("autoconf",
                "gawk",
                "gcc",
                "gdbm",
-               "gettext",
+               "gettext-tarball",
                "gperf",
                "groff",
                "libtool",
+               "libtool-tarball",
                "m4-tarball",
                "make",
                "nano",
                "patch",
                "rsync",
                "texinfo-tarball")
-
-
-def definitions_root():
-    return subprocess.check_output(
-        ["git", "rev-parse", "--show-toplevel"]).strip()
-
-
-def load_yaml_file(yaml_file):
-    with open(yaml_file, 'r') as f:
-        return yaml.safe_load(f)
 
 
 def license_file_name(repo_name, sha, licenses_dir):
@@ -91,6 +84,8 @@ def check_repo_if_needed(name, repo, ref, repos_dir, licenses_dir):
     if repo_name.endswith(".git"):
         repo_name = repo_name[:-4]
 
+    repo_url = scriptslib.parse_repo_alias(repo)
+
     # Check if ref is sha1 to speedup
     if len(ref) == 40 and all(c in string.hexdigits for c in ref):
         license_file = license_file_name(repo_name, ref, licenses_dir)
@@ -105,13 +100,31 @@ def check_repo_if_needed(name, repo, ref, repos_dir, licenses_dir):
             subprocess.check_call([
                 "git", "remote", "update", "origin", "--prune"],
                 stderr=devnull, stdout=devnull, cwd=clone_path)
+            # Update submodules
+            subprocess.check_call(
+                ["git", "submodule", "update", "--recursive"],
+                stderr=devnull, stdout=devnull, cwd=clone_path)
             subprocess.check_call(["git", "checkout", ref], stderr=devnull,
                 stdout=devnull, cwd=clone_path)
     else:
         sys.stderr.write("Getting repo '%s' ...\n" % repo_name)
         with open(os.devnull, 'w') as devnull:
-            subprocess.check_call(["morph", "get-repo", name, clone_path],
-                stdout=devnull, stderr=devnull)
+            try:
+                # Attempt to use morph to obtain a repository, from morph's
+                # existing local git cache if possible
+                subprocess.check_call(
+                    ["morph", "get-repo", name, clone_path],
+                    stdout=devnull, stderr=devnull)
+
+            except (OSError, subprocess.CalledProcessError):
+                # Fall back to git clone, when morph hasn't been found on the
+                # system, or otherwise fails to get a repo. This is required
+                # where morph isn't available, e.g. when using YBD to build.
+                # YBD currently doesn't offer a similar 'get-repo' feature.
+                sys.stderr.write("Falling back to git clone.\n")
+                subprocess.check_call(
+                    ["git", "clone", "--recursive", repo_url, clone_path],
+                    stdout=devnull, stderr=devnull) # also clone submodules
 
     sha = subprocess.check_output(
         ["git", "rev-parse", "HEAD"], cwd=clone_path).strip()
@@ -124,7 +137,7 @@ def check_repo_if_needed(name, repo, ref, repos_dir, licenses_dir):
 
 
 def check_stratum(stratum_file, repos_dir, licenses_dir):
-    stratum = load_yaml_file(stratum_file)
+    stratum = scriptslib.load_yaml_file(stratum_file)
     license_files = []
     for chunk in stratum['chunks']:
 
@@ -152,11 +165,14 @@ def main():
 
     args = parser.parse_args()
 
-    system = load_yaml_file(args.system)
+    if not os.path.exists(args.repos_dir):
+        os.makedirs(args.repos_dir)
+
+    system = scriptslib.load_yaml_file(args.system)
     license_files = []
     for stratum in system['strata']:
         stratum_file = stratum['morph']
-        stratum_path = os.path.join(definitions_root(), stratum_file)
+        stratum_path = os.path.join(scriptslib.definitions_root(), stratum_file)
         license_files.extend(check_stratum(stratum_path, args.repos_dir, args.licenses_dir))
 
     for chunk_repo, chunk_license in license_files:

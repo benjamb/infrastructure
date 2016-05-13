@@ -21,8 +21,11 @@ chunks:
   - libva
 - name: gstreamer-vaapi
   repo: upstream:gstreamer-vaapi
-  ref: a5842bbcfae873306f52c60386ea06357a4cb9d0
-  unpetrify-ref: baserock/1.6.0
+  ref: 4f62bf5a5e729ca851223b82d88a7f8c0b321de9
+  unpetrify-ref: 1.8.0
   build-system: autotools
   build-depends:
   - libva
+  submodules:
+    common:
+      url: upstream:gstreamer-common

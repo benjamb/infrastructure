@@ -30,11 +30,6 @@ chunks:
   repo: upstream:screen
   ref: 7dd4a9e5f385c96a77e8ee5c977a1dde4c0ff467
   unpetrify-ref: baserock/morph
-- name: less
-  repo: upstream:less
-  ref: 09a405d8f652b56944c93ebf5c673cdfe5319b04
-  unpetrify-ref: baserock/morph
-  build-system: autotools
 - name: git-review
   repo: upstream:git-review
   ref: 79262a52301c146a6b60d09a828661a83a5f5ba7
@@ -43,13 +38,16 @@ chunks:
 - name: wget
   morph: strata/devtools/wget.morph
   repo: upstream:wget
-  ref: 71d79f4f3043cf4ca3b2fb7f5328eae725c1293f
-  unpetrify-ref: baserock/v1.16.3
+  ref: f65f522f58606f125535306e712c2c29921ee8b4
+  unpetrify-ref: v1.17.1
+  submodules:
+    gnulib:
+      url: upstream:gnulib
 - name: git
   morph: strata/devtools/git.morph
   repo: upstream:git
-  ref: 9874fca7122563e28d699a911404fc49d2a24f1c
-  unpetrify-ref: v2.3.0
+  ref: ed9067f705aa51819c7dfff7e4190dd267beaf5d
+  unpetrify-ref: v2.8.0-rc2
 - name: iotop
   repo: upstream:iotop
   ref: 59e2537794d91c1375d391293f8fd89ca8b794a8

@@ -7,7 +7,7 @@ chunks:
 - name: bash-completion
   repo: upstream:bash-completion
   ref: 3085c7e12179817a02a611016606391295c69942
-  unpetrify-ref: "2.1"
+  unpetrify-ref: '2.1'
   build-system: autotools
 - name: groff
   morph: strata/foundation/groff.morph
@@ -17,8 +17,8 @@ chunks:
 - name: kmod
   morph: strata/foundation/kmod.morph
   repo: upstream:kmod
-  ref: ae58de0fcb4a6528dd365e23d383bbe2eaf2d566
-  unpetrify-ref: v18
+  ref: 42f32b8ae45ad8e3a1da29c9b20af9b5e2e9e676
+  unpetrify-ref: v22
 - name: time-zone-database
   morph: strata/foundation/time-zone-database.morph
   repo: upstream:tz
@@ -27,8 +27,8 @@ chunks:
 - name: pciutils
   morph: strata/foundation/pciutils.morph
   repo: upstream:pciutils
-  ref: bae04bd0473c68a2f21b7712a627abb08fd84b29
-  unpetrify-ref: baserock/morph
+  ref: 37c9315c504f266c23d51e62e59d32422dbbe9e7
+  unpetrify-ref: v3.4.1
 - name: dbus-pre
   morph: strata/foundation/dbus-pre.morph
   repo: upstream:dbus
@@ -40,34 +40,38 @@ chunks:
   ref: d77c33ae608d67086ea057cca5ddee99a7202f8b
   unpetrify-ref: libgpg-error-1.19
 - name: libgcrypt
+  morph: strata/foundation/libgcrypt.morph
   repo: upstream:libgcrypt
-  ref: 412eed473b557ed2172d81d76fa1e1f53c973a67
-  build-system: autotools
+  ref: e74d6f537498fea347b6073ba90c55d2693c4696
+  unpetrify-ref: baserock/libgcrypt-1.5.5
   build-depends:
   - libgpg-error
 - name: systemd
   morph: strata/foundation/systemd.morph
   repo: upstream:systemd
-  ref: c379f143a5ccdbc94a87cfca0174e7f21fa05f26
-  unpetrify-ref: v227
+  ref: 95adafc428b5b4be0ddd4d43a7b96658390388bc
+  unpetrify-ref: v229
   build-depends:
   - dbus-pre
   - kmod
   - libgcrypt
 - name: libusb
   repo: upstream:libusb
-  ref: e11525c66c7dd2db466c8f5785ff0b37d6a99ec9
-  unpetrify-ref: v1.0.19
+  ref: 01d6a03f417eb5dbac6ce039febdabdc4954c763
+  unpetrify-ref: baserock/v1.0.20+parallel-build-fix
   build-system: autotools
   build-depends:
   - systemd
 - name: usbutils
   repo: upstream:usbutils
-  ref: c37f146eb2c6642c600f1b025a6d56996b0697ff
-  unpetrify-ref: baserock/v008
+  ref: 3bafa6940f512357d7aa54d3a76de01662a19e48
+  unpetrify-ref: v008
   build-system: autotools
   build-depends:
   - libusb
+  submodules:
+    usbhid-dump:
+      url: upstream:usbhid-dump
 - name: lzo
   morph: strata/foundation/lzo.morph
   repo: upstream:lzo
@@ -76,8 +80,8 @@ chunks:
 - name: fuse
   morph: strata/foundation/fuse.morph
   repo: upstream:fuse
-  ref: d69e627e79862e2df4ff9ff1ddb0363c4520d8a8
-  unpetrify-ref: baserock/morph
+  ref: e9b2eec7c5856032652bb8ff734174764e444c74
+  unpetrify-ref: baserock/fuse_2_9_4-fix-armv8
 - name: btrfs-progs
   morph: strata/foundation/btrfs-progs.morph
   repo: upstream:btrfs-progs
@@ -109,3 +113,15 @@ chunks:
   repo: upstream:rsync
   ref: 7cb0de6326c915a72253fd103dae93308031ec3f
   unpetrify-ref: v3.1.1
+- name: python-systemd
+  build-system: python3-distutils
+  repo: upstream:python-packages/python-systemd
+  ref: 8ccd64789ab030b76a99b578b5b1e9812b7a8cd8
+  unpetrify-ref: v231
+  build-depends:
+  - systemd
+- name: libarchive
+  morph: strata/foundation/libarchive.morph
+  repo: upstream:libarchive
+  ref: 19f23e191f9d3e1dd2a518735046100419965804
+  unpetrify-ref: v3.1.2

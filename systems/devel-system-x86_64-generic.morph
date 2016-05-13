@@ -64,6 +64,12 @@ strata:
   morph: strata/perl-common.morph
 - name: CPAN-Mini-Inject
   morph: strata/CPAN-Mini-Inject.morph
+- name: erlang
+  morph: strata/erlang.morph
+- name: elixir
+  morph: strata/elixir.morph
+- name: sandboxing
+  morph: strata/sandboxing.morph
 configuration-extensions:
 - extensions/set-hostname
 - extensions/add-config-files

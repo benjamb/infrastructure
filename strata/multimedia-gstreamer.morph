@@ -11,47 +11,64 @@ chunks:
 - name: orc
   morph: strata/multimedia-gstreamer/orc.morph
   repo: upstream:orc
-  ref: 1a3af3cb4daeb6802197a7854507d6ee8bc9a06b
-  unpetrify-ref: orc-0.4.24
+  ref: 831886d1f70d3cc21a913b2e335da38af4cae524
+  unpetrify-ref: orc-0.4.25
 - name: gstreamer
   repo: upstream:gstreamer
-  ref: 3119e6bb4b574a01921da2e652d2910d98a6eb27
-  unpetrify-ref: baserock/1.6.3
+  ref: 1abf889dddc75b4e4db2f4505a4287cb20878d27
+  unpetrify-ref: 1.8.0
   build-system: autotools
   build-depends:
   - orc
+  submodules:
+    common:
+      url: upstream:gstreamer-common
 - name: gstreamer-plugins-base
   repo: upstream:gstreamer-plugins-base
-  ref: 644cd58c5a1142580ad133a5122986581cf4d8ef
-  unpetrify-ref: baserock/1.6.3
+  ref: d67525d594d592e01f13be3c498fef891d11cbf3
+  unpetrify-ref: 1.8.0
   build-system: autotools
   build-depends:
   - gstreamer
   - orc
+  submodules:
+    common:
+      url: upstream:gstreamer-common
 - name: gstreamer-plugins-good
   repo: upstream:gstreamer-plugins-good
-  ref: e6fb1b485dd2726e6c65d938c5ea4d002cf1036e
-  unpetrify-ref: baserock/1.6.3
+  ref: 7b809209f7abc07fca51addb60bd499fa8693eed
+  unpetrify-ref: 1.8.0
   build-system: autotools
   build-depends:
   - gstreamer
   - gstreamer-plugins-base
   - orc
+  submodules:
+    common:
+      url: upstream:gstreamer-common
 - name: gstreamer-plugins-bad
   repo: upstream:gstreamer-plugins-bad
-  ref: 9a2e845040c3aafff00159a6b0031e123cad4b2f
-  unpetrify-ref: baserock/1.6.3
+  ref: 740d3507eaf4381ba80de18b607bbd732bccca65
+  unpetrify-ref: 1.8.0
   build-system: autotools
   build-depends:
   - gstreamer
   - gstreamer-plugins-base
   - orc
+  submodules:
+    common:
+      url: upstream:gstreamer-common
 - name: gst-libav
   morph: strata/multimedia-gstreamer/gst-libav.morph
   repo: upstream:gst-libav
-  ref: ac8afa33d47e10246d9b7329f39dc53b4bd4711e
-  unpetrify-ref: baserock/1.6.3
+  ref: 2d362cc9206785bab4d20c7e375b9c8872d60f95
+  unpetrify-ref: 1.8.0
   build-depends:
   - gstreamer
   - gstreamer-plugins-base
   - orc
+  submodules:
+    gst-libs/ext/libav:
+      url: upstream:ffmpeg
+    common:
+      url: upstream:gstreamer-common

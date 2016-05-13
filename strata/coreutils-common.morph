@@ -10,8 +10,11 @@ chunks:
 - name: coreutils
   morph: strata/coreutils-common/coreutils.morph
   repo: upstream:coreutils
-  ref: 9df9643842e4b4d8ece710fe6105f32fa38a0d22
-  unpetrify-ref: baserock/8.23
+  ref: 68f73f23866d6137e9c8d88d86073b33588d7b56
+  unpetrify-ref: v8.25
+  submodules:
+    gnulib:
+      url: upstream:gnulib
 - name: sed
   morph: strata/coreutils-common/sed.morph
   repo: upstream:sed
@@ -19,6 +22,9 @@ chunks:
   unpetrify-ref: baserock/morph
   build-depends:
   - coreutils
+  submodules:
+    gnulib:
+      url: upstream:gnulib
 - name: diff
   morph: strata/coreutils-common/diff.morph
   repo: upstream:diffutils
@@ -26,6 +32,9 @@ chunks:
   unpetrify-ref: baserock/v3.3
   build-depends:
   - coreutils
+  submodules:
+    gnulib:
+      url: upstream:gnulib
 - name: tar
   morph: strata/coreutils-common/tar.morph
   repo: upstream:tar
@@ -33,8 +42,26 @@ chunks:
   unpetrify-ref: baserock/release_1_28
   build-depends:
   - coreutils
+  submodules:
+    paxutils:
+      url: upstream:paxutils
+    gnulib:
+      url: upstream:gnulib
 - name: findutils
-  morph: strata/coreutils-common/findutils.morph
   repo: upstream:findutils
-  ref: ee6b25541336f9d74624ca814538ddc8c67f0732
-  unpetrify-ref: baserock/v4.5.14
+  ref: 992a6b62ab8061531dc0ad40325b8e4c222fce66
+  unpetrify-ref: v4.6.0
+  build-system: autotools
+  submodules:
+    gnulib:
+      url: upstream:gnulib
+- name: less
+  repo: upstream:less
+  ref: 09a405d8f652b56944c93ebf5c673cdfe5319b04
+  unpetrify-ref: baserock/morph
+  build-system: autotools
+- name: jq
+  repo: upstream:jq
+  ref: a5b5cbefb83935ce95ec62b9cadc8ec73026d33a
+  unpetrify-ref: jq-1.5
+  build-system: autotools
