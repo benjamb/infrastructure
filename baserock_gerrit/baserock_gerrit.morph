@@ -23,4 +23,5 @@ systems:
       OPENSTACK_IMAGENAME: baserock_gerrit
       CLOUD_INIT: true
       DISK_SIZE: 3G
+      HOSTNAME: gerrit
       KERNEL_ARGS: console=tty0 console=ttyS0
