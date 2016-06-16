@@ -12,7 +12,7 @@
     controller: {
       url: "http://git.baserock.org/git/baserock/baserock/lorry-controller.git",
       dest: "/tmp/controller",
-      version: "master"}
+      version: "benbrown/gitlab"}
     bzrfi: {
       url: "http://git.baserock.org/git/delta/bzr-fastimport.git",
       dest: "/tmp/bzrfi",
